@@ -1,0 +1,52 @@
+insert into planet(name, radius, temperature, gravity, escape_velocity, orbital_period) values
+('Earth', 6400, 14, 1, 11, 365.25),
+('Mars', 3400, -60, 0.38, 4.25, 687),
+('Venus', 6000, 464, 0.9, 10, 225),
+('Mercury', 2440, 430, 0.37, 4.3, 88),
+('Jupiter', 70000, -110, 2.53, 60, 4380),
+('Saturn', 58200,-140, 1.1, 35.5, 10700),
+('Uranus', 25400, -196, 0.9, 21.3, 30660),
+('Neptune', 24600, -200, 1.1, 23.5, 60225),
+('Pluto', 1200, -230, 0.06, 1.21, 90500),
+('K2-38b', 9850, 993, 3.1, 14, 4);
+select * from planet;
+
+insert into satellite(name, radius, distance, gravity, escape_velocity, orbital_period, planet_id) values
+('Moon', 1740, 384400, 0.16, 2.38, 27, 1),
+('Phobos', 11, 6000, 0.0057, 0.041, 0.3, 2),
+('Deimos', 6.2, 23460, 0.003, 0.0056, 1.25, 2),
+('Ganymede', 2634, 1070000, 0.14, 2.7, 7, 5),
+('Europa', 1560, 671000, 0.13, 2, 3.5, 5),
+('Titan', 2574, 1200000, 0.14, 2.64, 16, 6),
+('Ariel', 579, 190900, 0.025, 0.5, 2.5, 7),
+('Triton', 1353, 354800, 0.08, 1.45, 5.8, 8),
+('Charon', 606, 19640, 0.03, 0.59, 6.4, 9),
+('Callisto', 2410, 1883000, 0.13, 2.4, 17, 5);
+select * from satellite;
+
+insert into life_form(name, iq, life_span, energy_use, friendly, conscious) values
+('Human', 100, 73, 2000, false, true),
+('Chimpanzee', 25, 30, 800, false, true),
+('Dog', 5, 15, 360, true, false),
+('Parrot', 10, 20, 50, true, true),
+('Dolphin', 20, 50, 4600, true, true),
+('Cat', 3, 10, 200, true, false),
+('Fox', 4, 15, 500, false, false),
+('Elephant', 20, 60, 10000, false, true),
+('Lion', 8, 12, 4000, false, false),
+('Snake', 1, 25, 400, false, false);
+select * from life_form;
+
+insert into planet_life_form(planet_id, life_form_id, survivability, adaptability) values
+(1, 1, 50, 100),
+(1, 2, 20, 60),
+(1, 3, 40, 80),
+(1, 4, 25, 75),
+(1, 5, 20, 40),
+(1, 6, 60, 90),
+(1, 7, 25, 40),
+(1, 8, 30, 40),
+(1, 9, 35, 50),
+(1, 10, 70, 80);
+select * from planet_life_form;
+
