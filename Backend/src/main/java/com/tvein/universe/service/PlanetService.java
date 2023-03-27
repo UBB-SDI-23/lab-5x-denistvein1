@@ -1,6 +1,6 @@
 package com.tvein.universe.service;
 
-import com.tvein.universe.entity.BulkAddDto;
+import com.tvein.universe.dto.BulkAddDto;
 import com.tvein.universe.entity.LifeForm;
 import com.tvein.universe.entity.Planet;
 import com.tvein.universe.entity.Satellite;

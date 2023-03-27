@@ -2,7 +2,7 @@ package com.tvein.universe.controller;
 
 import com.tvein.universe.dto.report.ReportPlanetLifeFormDTO;
 import com.tvein.universe.dto.report.ReportPlanetSatelliteDTO;
-import com.tvein.universe.entity.BulkAddDto;
+import com.tvein.universe.dto.BulkAddDto;
 import com.tvein.universe.entity.Planet;
 import com.tvein.universe.dto.PlanetDTO;
 import com.tvein.universe.entity.PlanetLifeForm;

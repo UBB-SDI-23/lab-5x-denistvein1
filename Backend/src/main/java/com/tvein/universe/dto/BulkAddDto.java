@@ -1,4 +1,4 @@
-package com.tvein.universe.entity;
+package com.tvein.universe.dto;
 
 import lombok.Data;
 
