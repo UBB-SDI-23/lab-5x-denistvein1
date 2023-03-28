@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = "/api/satellite")
+@RequestMapping(path = "/api/satellites")
 public class SatelliteController {
 
     private ISatelliteService satelliteService;
 
     private ModelMapper modelMapper;
 
-    @PostMapping("/planet/{planetId}")
+    @PostMapping("/{planetId}")
     public ResponseEntity<Satellite> saveSatellite(@Valid @RequestBody Satellite satellite, @PathVariable Long planetId){
         return new ResponseEntity<>(satelliteService.saveSatellite(satellite, planetId), HttpStatus.CREATED);
     }

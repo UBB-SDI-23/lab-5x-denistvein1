@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = "/api/lifeForm")
+@RequestMapping(path = "/api/lifeForms")
 public class LifeFormController {
 
     private ILifeFormService lifeFormService;

@@ -21,14 +21,14 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(path = "/api/planet")
+@RequestMapping(path = "/api/planets")
 public class PlanetController {
 
     private IPlanetService planetService;
     private IPlanetLifeFormService planetLifeFormService;
     private ModelMapper modelMapper;
 
-    @PostMapping("/{planetId}/lifeForm/{lifeFormId}")
+    @PostMapping("/{planetId}/lifeForms/{lifeFormId}")
     public ResponseEntity<PlanetLifeForm> savePlanetLifeForm(@Valid @RequestBody PlanetLifeForm planetLifeForm, @PathVariable Long planetId, @PathVariable Long lifeFormId){
         return new ResponseEntity<>(planetLifeFormService.savePlanetLifeForm(planetLifeForm, planetId, lifeFormId), HttpStatus.CREATED);
     }
@@ -38,7 +38,7 @@ public class PlanetController {
         return new ResponseEntity<>(planetService.savePlanet(planet), HttpStatus.CREATED);
     }
 
-    @PostMapping("/{id}/satellite")
+    @PostMapping("/{id}/satellites")
     public ResponseEntity<HttpStatus> bulkAddSatellites(@PathVariable Long id, @RequestBody List<BulkAddDto> listIds){
         planetService.bulkAddSatellites(id, listIds);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -62,7 +62,7 @@ public class PlanetController {
         return new ResponseEntity<>(planets, HttpStatus.OK);
     }
 
-    @GetMapping("/report/satellite")
+    @GetMapping("/by-biggest-satellites")
     public ResponseEntity<List<ReportPlanetSatelliteDTO>> getReportSatellite(){
         List<ReportPlanetSatelliteDTO> report = planetService.getPlanetsWithBiggestSatellite().stream()
                 .map(pair -> new ReportPlanetSatelliteDTO(pair.getFirst().getName(), pair.getSecond().getRadius()))
@@ -70,7 +70,7 @@ public class PlanetController {
         return new ResponseEntity<>(report, HttpStatus.OK);
     }
 
-    @GetMapping("/report/lifeForm")
+    @GetMapping("/by-avg-lifeForm-iq")
     public ResponseEntity<List<ReportPlanetLifeFormDTO>> getReportLifeForm(){
         List<ReportPlanetLifeFormDTO> report = planetService.getPlanetsByAverageLifeFormIq().stream()
                 .map(pair -> new ReportPlanetLifeFormDTO(pair.getFirst().getName(), pair.getSecond()))
