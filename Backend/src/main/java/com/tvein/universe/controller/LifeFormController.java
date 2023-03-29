@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/lifeForms")
 public class LifeFormController {
 

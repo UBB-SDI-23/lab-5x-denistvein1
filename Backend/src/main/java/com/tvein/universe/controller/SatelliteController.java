@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/satellites")
 public class SatelliteController {
 

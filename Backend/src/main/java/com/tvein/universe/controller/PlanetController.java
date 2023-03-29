@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/planets")
 public class PlanetController {
 
