@@ -36,10 +36,12 @@ public class LifeForm {
     private Double energyUse;
     @NonNull
     @Column(nullable = false)
-    private Boolean friendly;
+    @NotBlank(message = "LifeForm friendly cannot be blank")
+    private String friendly;
     @NonNull
     @Column(nullable = false)
-    private Boolean conscious;
+    @NotBlank(message = "LifeForm conscious cannot be blank")
+    private String conscious;
 
     @JsonIgnore
     @OneToMany(mappedBy = "lifeForm", cascade = CascadeType.ALL)

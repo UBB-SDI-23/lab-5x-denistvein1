@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/planets")
 public class PlanetController {
-
     private IPlanetService planetService;
     private IPlanetLifeFormService planetLifeFormService;
     private ModelMapper modelMapper;
@@ -61,7 +60,7 @@ public class PlanetController {
         return new ResponseEntity<>(planetService.getPlanetsByRadiusGreaterThan(radius), HttpStatus.OK);
     }
 
-    @GetMapping("/by-biggest-satellites")
+    @GetMapping("/by-biggest-satellite")
     public ResponseEntity<List<ReportPlanetSatelliteDTO>> getReportSatellite(){
         List<ReportPlanetSatelliteDTO> report = planetService.getPlanetsWithBiggestSatellite().stream()
                 .map(pair -> new ReportPlanetSatelliteDTO(pair.getFirst().getName(), pair.getSecond().getName(), pair.getSecond().getRadius()))

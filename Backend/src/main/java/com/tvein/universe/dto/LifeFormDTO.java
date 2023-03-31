@@ -11,7 +11,7 @@ public class LifeFormDTO {
     private Integer iq;
     private Integer lifeSpan;
     private Double energyUse;
-    private Boolean friendly;
-    private Boolean conscious;
+    private String friendly;
+    private String conscious;
     private List<LifeFormPlanetDTO> planetLifeForms;
 }

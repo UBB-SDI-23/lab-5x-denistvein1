@@ -38,14 +38,14 @@ public class PlanetServiceTest {
                 new Planet(1L, "Earth", 6400.0, 14.0, 1.0, 11.0, 365.25, List.of(
                         new Satellite(1L, "Moon", 1740.0, 384400.0, 0.16, 2.38, 27.0, null)
                 ), List.of(
-                        new PlanetLifeForm(new PlanetLifeFormKey(1L, 1L), null, new LifeForm(1L, "Human", 100, 73, 2000.0, false, true, null), 50, 100),
-                        new PlanetLifeForm(new PlanetLifeFormKey(1L, 2L), null, new LifeForm(2L, "Chimpanzee", 25, 30, 800.0, false, true, null), 20, 60)
+                        new PlanetLifeForm(new PlanetLifeFormKey(1L, 1L), null, new LifeForm(1L, "Human", 100, 73, 2000.0, "no", "yes", null), 50, 100),
+                        new PlanetLifeForm(new PlanetLifeFormKey(1L, 2L), null, new LifeForm(2L, "Chimpanzee", 25, 30, 800.0, "no", "yes", null), 20, 60)
                 )),
                 new Planet(2L, "Mars", 3400.0, -60.0, 0.38, 4.25, 687.0, List.of(
                         new Satellite(2L, "Phobos", 11.0, 6000.0, 0.0057, 0.041, 0.3, null)
                 ), List.of(
-                        new PlanetLifeForm(new PlanetLifeFormKey(2L, 3L), null, new LifeForm(3L, "Dog", 5, 15, 360.0, true, false, null), 40, 80),
-                        new PlanetLifeForm(new PlanetLifeFormKey(2L, 4L), null, new LifeForm(4L, "Parrot", 10, 20, 50.0, true, true, null), 25, 75)
+                        new PlanetLifeForm(new PlanetLifeFormKey(2L, 3L), null, new LifeForm(3L, "Dog", 5, 15, 360.0, "yes", "no", null), 40, 80),
+                        new PlanetLifeForm(new PlanetLifeFormKey(2L, 4L), null, new LifeForm(4L, "Parrot", 10, 20, 50.0, "yes", "yes", null), 25, 75)
                 ))
         ));
     }
