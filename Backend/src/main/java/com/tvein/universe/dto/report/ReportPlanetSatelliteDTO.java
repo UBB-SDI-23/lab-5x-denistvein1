@@ -8,6 +8,7 @@ import lombok.Data;
 public class ReportPlanetSatelliteDTO {
 
     private String planetName;
+    private String satelliteName;
     private Double maxSatelliteRadius;
 
 }
