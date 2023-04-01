@@ -1,1 +1,1 @@
-export const BACKEND_API_URL = 'http://13.48.192.153/api';
+export const BACKEND_API_URL = '/api/';
