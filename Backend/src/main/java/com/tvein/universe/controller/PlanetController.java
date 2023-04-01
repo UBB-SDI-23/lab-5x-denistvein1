@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -51,13 +52,14 @@ public class PlanetController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Planet>> getPlanets(){
-        return new ResponseEntity<>(planetService.getPlanets(), HttpStatus.OK);
-    }
-
-    @GetMapping("/minRadius/{radius}")
-    public ResponseEntity<List<Planet>> getPlanets(@PathVariable Double radius){
-        return new ResponseEntity<>(planetService.getPlanetsByRadiusGreaterThan(radius), HttpStatus.OK);
+    public ResponseEntity<List<Planet>> getPlanets(@RequestParam(required = false) Optional<Double> radius) {
+        List<Planet> planets;
+        if (radius.isPresent()) {
+            planets = planetService.getPlanetsByRadiusGreaterThan(radius.get());
+        } else {
+            planets = planetService.getPlanets();
+        }
+        return new ResponseEntity<>(planets, HttpStatus.OK);
     }
 
     @GetMapping("/by-biggest-satellite")
