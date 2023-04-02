@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
-import { BACKEND_API_URL } from "../../constants";
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SHOW_NOTIFICATION } from "../../constants";
 import AddIcon from "@mui/icons-material/Add";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import EditIcon from "@mui/icons-material/Edit";
@@ -27,9 +27,13 @@ export const AllLifeForms = () => {
     useEffect(() => {
         const fetchLifeForms = async () => {
             setLoading(true);
-            const response = await fetch(`${BACKEND_API_URL}/lifeForms`);
-			const lifeForms = await response.json();
-            setLifeForms(lifeForms);
+            try{
+                const response = await fetch(`${BACKEND_API_URL}/lifeForms`);
+                const lifeForms = await response.json();
+                setLifeForms(lifeForms);
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
             setLoading(false);
         };
         fetchLifeForms();
@@ -79,17 +83,17 @@ export const AllLifeForms = () => {
                                     <TableCell align="center">{lifeForm.friendly}</TableCell>
                                     <TableCell align="center">{lifeForm.conscious}</TableCell>
                                     <TableCell align="center">
-                                        <IconButton component={Link} sx={{ mr: 3 }} to={`/lifeForms/${lifeForm.id}/details`}>
+                                        <IconButton component={Link} to={`/lifeForms/${lifeForm.id}/details`}>
 											<Tooltip title="View life form details" arrow>
 												<ReadMoreIcon color="primary"/>
 											</Tooltip>
                                         </IconButton>
 
-                                        <IconButton component={Link} sx={{ mr: 3 }} to={`/lifeForms/${lifeForm.id}/edit`}>
+                                        <IconButton component={Link} to={`/lifeForms/${lifeForm.id}/edit`}>
                                             <EditIcon/>
                                         </IconButton>
 
-                                        <IconButton component={Link} sx={{ mr: 3 }} to={`/lifeForms/${lifeForm.id}/delete`}>
+                                        <IconButton component={Link} to={`/lifeForms/${lifeForm.id}/delete`}>
                                             <DeleteForeverIcon sx={{ color: "red" }}/>
                                         </IconButton>
                                     </TableCell>

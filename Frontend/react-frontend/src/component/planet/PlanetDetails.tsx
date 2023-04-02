@@ -2,7 +2,7 @@ import { Card, CardActions, CardContent, IconButton } from "@mui/material";
 import { Container } from "@mui/system";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { BACKEND_API_URL } from "../../constants";
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SHOW_NOTIFICATION } from "../../constants";
 import { Planet } from "../../models/Planet";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -14,9 +14,13 @@ export const PlanetDetails = () => {
 
 	useEffect(() => {
         const fetchPlanet =async () => {
-            const response = await fetch(`${BACKEND_API_URL}/planets/${planetId}`);
-            const planet = await response.json();
-            setPlanet(planet);
+            try{
+                const response = await fetch(`${BACKEND_API_URL}/planets/${planetId}`);
+                const planet = await response.json();
+                setPlanet(planet);
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
         };
         fetchPlanet();
     }, [planetId]);

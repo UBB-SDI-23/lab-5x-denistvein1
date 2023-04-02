@@ -3,7 +3,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { useNavigate, Link, useParams } from "react-router-dom"
-import { BACKEND_API_URL } from "../../constants";
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SEVERITY_SUCCESS, SHOW_NOTIFICATION } from "../../constants";
 import { Planet } from "../../models/Planet";
 
 export const UpdatePlanet = () => {
@@ -21,17 +21,26 @@ export const UpdatePlanet = () => {
 
     useEffect(() => {
         const fetchPlanet =async () => {
-            const response = await fetch(`${BACKEND_API_URL}/planets/${planetId}`);
-            const planet = await response.json();
-            setPlanet(planet);
+            try{
+                const response = await fetch(`${BACKEND_API_URL}/planets/${planetId}`);
+                const planet = await response.json();
+                setPlanet(planet);
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
         };
         fetchPlanet();
     }, []);
 
     const updatePlanet = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
-        await axios.put(`${BACKEND_API_URL}/planets/${planetId}`, planet);
-        navigate("/planets");
+        try{
+            await axios.put(`${BACKEND_API_URL}/planets/${planetId}`, planet);
+            PubSub.publish(SHOW_NOTIFICATION, {msg: "Planet updated sucessfully!", severity: SEVERITY_SUCCESS})
+            navigate("/planets");
+        }catch(e){
+            PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+        }
     };
 
     return (

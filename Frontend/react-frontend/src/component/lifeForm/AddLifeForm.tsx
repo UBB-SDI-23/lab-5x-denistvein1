@@ -3,7 +3,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { BACKEND_API_URL } from "../../constants";
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SEVERITY_SUCCESS, SHOW_NOTIFICATION } from "../../constants";
 import { LifeForm } from "../../models/LifeForm";
 
 export const AddLifeForm = () => {
@@ -15,13 +15,18 @@ export const AddLifeForm = () => {
         lifeSpan: 0,
         energyUse: 0,
         friendly: "",
-        conscious: "",
+        conscious: ""
     });
 
     const addLifeForm = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
-        await axios.post(`${BACKEND_API_URL}/lifeForms`, lifeForm);
-        navigate("/lifeForms");
+        try{
+            await axios.post(`${BACKEND_API_URL}/lifeForms`, lifeForm);
+            PubSub.publish(SHOW_NOTIFICATION, {msg: "Life form added sucessfully!", severity: SEVERITY_SUCCESS});
+            navigate("/lifeForms");
+        }catch(e){
+            PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+        }
     };
 
     return (

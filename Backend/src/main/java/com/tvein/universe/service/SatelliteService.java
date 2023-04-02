@@ -57,7 +57,7 @@ public class SatelliteService implements ISatelliteService{
         Optional<Satellite> satelliteOptional = satelliteRepository.findById(id);
         if(satelliteOptional.isPresent()){
             Satellite oldSatellite = satelliteOptional.get();
-            BeanUtils.copyProperties(satellite, oldSatellite, "id", "planet");
+            BeanUtils.copyProperties(satellite, oldSatellite, "id");
             return satelliteRepository.save(oldSatellite);
         }else{
             throw new SatelliteNotFoundException(id);

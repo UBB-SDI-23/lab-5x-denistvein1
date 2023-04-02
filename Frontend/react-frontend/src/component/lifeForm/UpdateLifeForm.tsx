@@ -3,7 +3,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { useNavigate, Link, useParams } from "react-router-dom"
-import { BACKEND_API_URL } from "../../constants";
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SEVERITY_SUCCESS, SHOW_NOTIFICATION } from "../../constants";
 import { LifeForm } from "../../models/LifeForm";
 
 export const UpdateLifeForm = () => {
@@ -21,17 +21,26 @@ export const UpdateLifeForm = () => {
 
     useEffect(() => {
         const fetchLifeForm =async () => {
-            const response = await fetch(`${BACKEND_API_URL}/lifeForms/${lifeFormId}`);
-            const lifeForm = await response.json();
-            setLifeForm(lifeForm);
+            try{
+                const response = await fetch(`${BACKEND_API_URL}/lifeForms/${lifeFormId}`);
+                const lifeForm = await response.json();
+                setLifeForm(lifeForm);
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
         };
         fetchLifeForm();
     }, []);
 
     const updateLifeForm = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
-        await axios.put(`${BACKEND_API_URL}/lifeForms/${lifeFormId}`, lifeForm);
-        navigate("/lifeForms");
+        try{
+            await axios.put(`${BACKEND_API_URL}/lifeForms/${lifeFormId}`, lifeForm);
+            PubSub.publish(SHOW_NOTIFICATION, {msg: "Life form updated sucessfully!", severity: SEVERITY_SUCCESS});
+            navigate("/lifeForms");
+        }catch(e){
+            PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+        }
     };
 
     return (

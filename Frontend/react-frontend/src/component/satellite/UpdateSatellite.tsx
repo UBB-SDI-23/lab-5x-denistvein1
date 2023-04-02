@@ -2,8 +2,8 @@ import { Button, Card, CardContent, IconButton, TextField, Container, FormContro
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { useEffect, useState } from "react"
-import { useNavigate, Link, useParams } from "react-router-dom"
-import { BACKEND_API_URL } from "../../constants";
+import { useNavigate, Link, useParams, useFetchers } from "react-router-dom"
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SEVERITY_SUCCESS, SHOW_NOTIFICATION } from "../../constants";
 import { Satellite } from "../../models/Satellite";
 import { Planet } from "../../models/Planet";
 
@@ -34,9 +34,13 @@ export const UpdateSatellite = () => {
     useEffect(() => {
         const fetchPlanets = async () => {
             setLoading(true);
-            const response = await fetch(`${BACKEND_API_URL}/planets`);
-			const planets = await response.json();
-            setPlanets(planets);
+            try{
+                const response = await fetch(`${BACKEND_API_URL}/planets`);
+                const planets = await response.json();
+                setPlanets(planets);
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
             setLoading(false);
         };
         fetchPlanets();
@@ -44,17 +48,26 @@ export const UpdateSatellite = () => {
 
     useEffect(() => {
         const fetchSatellite = async () => {
-            const response = await fetch(`${BACKEND_API_URL}/satellites/${satelliteId}`);
-            const satellite = await response.json();
-            setSatellite(satellite);
+            try{
+                const response = await fetch(`${BACKEND_API_URL}/satellites/${satelliteId}`);
+                const satellite = await response.json();
+                setSatellite(satellite);
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
         };
         fetchSatellite();
     }, []);
 
     const updateSatellite = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
-        await axios.put(`${BACKEND_API_URL}/satellites/${satelliteId}`, satellite);
-        navigate("/satellites");
+        try{
+            await axios.put(`${BACKEND_API_URL}/satellites/${satelliteId}`, satellite);
+            PubSub.publish(SHOW_NOTIFICATION, {msg: "Satellite updated sucessfully!", severity: SEVERITY_SUCCESS});
+            navigate("/satellites");
+        }catch(e){
+            PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+        }
     };
 
     return (

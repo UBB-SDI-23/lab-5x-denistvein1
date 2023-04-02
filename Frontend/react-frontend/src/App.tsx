@@ -18,12 +18,14 @@ import { LifeFormDetails } from './component/lifeForm/LifeFormDetails';
 import { UpdatePlanet } from './component/planet/UpdatePlanet';
 import { UpdateSatellite } from './component/satellite/UpdateSatellite';
 import { UpdateLifeForm } from './component/lifeForm/UpdateLifeForm';
+import { NotificationBar } from './component/NotificationBar';
 
 function App() {
 	return (
 		<React.Fragment>
 			<Router>
 				<AppMenu />
+                <NotificationBar/>
 				<Routes>
                     <Route path="/" element={<AppHome/>}/>
                     <Route path="/planets" element={<AllPlanets/>}/>

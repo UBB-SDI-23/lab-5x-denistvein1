@@ -2,7 +2,7 @@ import { Card, CardActions, CardContent, IconButton } from "@mui/material";
 import { Container } from "@mui/system";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { BACKEND_API_URL } from "../../constants";
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SHOW_NOTIFICATION } from "../../constants";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -14,13 +14,18 @@ export const SatelliteDetails = () => {
 
     useEffect(() => {
         const fetchSatellite = async () => {
-            const response = await fetch(`${BACKEND_API_URL}/satellites/${satelliteId}`);
-            const satellite = await response.json();
-            setSatellite(satellite);     
+            try{
+                const response = await fetch(`${BACKEND_API_URL}/satellites/${satelliteId}`);
+                const satellite = await response.json();
+                setSatellite(satellite);   
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
         };
         fetchSatellite();
     }, [satelliteId]);
 
+    console.log("planet name: ", satellite?.planet.name);
     return (
         <Container>
             <Card>

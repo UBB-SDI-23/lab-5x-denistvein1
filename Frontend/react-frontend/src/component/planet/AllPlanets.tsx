@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
-import { BACKEND_API_URL } from "../../constants";
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SHOW_NOTIFICATION } from "../../constants";
 import { Planet } from "../../models/Planet";
 import AddIcon from "@mui/icons-material/Add";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
@@ -33,15 +33,19 @@ export const AllPlanets = () => {
     useEffect(() => {
         const fetchPlanets = async () => {
             setLoading(true);
-            const responsePlanets = await fetch(`${BACKEND_API_URL}/planets`);
-            const responseReportPlanetLifeFormDto = await fetch(`${BACKEND_API_URL}/planets/by-avg-lifeForm-iq`);
-            const responseReportPlanetSatelliteDto = await fetch(`${BACKEND_API_URL}/planets/by-biggest-satellite`);
-			const planets = await responsePlanets.json();
-			const reportPlanetLifeFormDto = await responseReportPlanetLifeFormDto.json();
-            const reportPlanetSatelliteDto = await responseReportPlanetSatelliteDto.json();
-            setPlanets(planets);
-            setReportPlanetLifeFormDto(reportPlanetLifeFormDto);
-            setReportPlanetSatelliteDto(reportPlanetSatelliteDto);
+            try{
+                const responsePlanets = await fetch(`${BACKEND_API_URL}/planets`);
+                const responseReportPlanetLifeFormDto = await fetch(`${BACKEND_API_URL}/planets/by-avg-lifeForm-iq`);
+                const responseReportPlanetSatelliteDto = await fetch(`${BACKEND_API_URL}/planets/by-biggest-satellite`);
+                const planets = await responsePlanets.json();
+                const reportPlanetLifeFormDto = await responseReportPlanetLifeFormDto.json();
+                const reportPlanetSatelliteDto = await responseReportPlanetSatelliteDto.json();
+                setPlanets(planets);
+                setReportPlanetLifeFormDto(reportPlanetLifeFormDto);
+                setReportPlanetSatelliteDto(reportPlanetSatelliteDto);
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
             setLoading(false);
         };
         fetchPlanets();
@@ -63,7 +67,7 @@ export const AllPlanets = () => {
                 <div>
                     <TextField
                         id="radius"
-                        label="Radius"
+                        label="Radius > than"
                         variant="outlined"
                         fullWidth
                         sx={{ mb: 2 }}
@@ -107,17 +111,17 @@ export const AllPlanets = () => {
                                             filteredDto.satelliteName
                                         ))}</TableCell>
                                         <TableCell align="center">
-                                            <IconButton component={Link} sx={{ mr: 3 }} to={`/planets/${planet.id}/details`}>
+                                            <IconButton component={Link} to={`/planets/${planet.id}/details`}>
                                                 <Tooltip title="View planet details" arrow>
                                                     <ReadMoreIcon color="primary"/>
                                                 </Tooltip>
                                             </IconButton>
 
-                                            <IconButton component={Link} sx={{ mr: 3 }} to={`/planets/${planet.id}/edit`}>
+                                            <IconButton component={Link} to={`/planets/${planet.id}/edit`}>
                                                 <EditIcon/>
                                             </IconButton>
 
-                                            <IconButton component={Link} sx={{ mr: 3 }} to={`/planets/${planet.id}/delete`}>
+                                            <IconButton component={Link} to={`/planets/${planet.id}/delete`}>
                                                 <DeleteForeverIcon sx={{ color: "red" }}/>
                                             </IconButton>
                                         </TableCell>

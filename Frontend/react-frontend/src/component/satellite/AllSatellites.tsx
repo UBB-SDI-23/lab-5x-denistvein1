@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BACKEND_API_URL } from "../../constants";
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SHOW_NOTIFICATION } from "../../constants";
 import { Satellite } from "../../models/Satellite";
 import AddIcon from "@mui/icons-material/Add";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
@@ -27,9 +27,13 @@ export const AllSatellites = () => {
     useEffect(() => {
         const fetchSatellites =async () => {
             setLoading(true);
-            const response = await fetch(`${BACKEND_API_URL}/satellites`);
-            const satellites = await response.json();
-            setSatellites(satellites);
+            try{
+                const response = await fetch(`${BACKEND_API_URL}/satellites`);
+                const satellites = await response.json();
+                setSatellites(satellites);
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
             setLoading(false);
         };
         fetchSatellites();
@@ -79,17 +83,17 @@ export const AllSatellites = () => {
                                     <TableCell align="center">{satellite.escapeVelocity}</TableCell>
                                     <TableCell align="center">{satellite.orbitalPeriod}</TableCell>
                                     <TableCell>
-                                        <IconButton component={Link} sx={{ mr: 3 }} to={`/satellites/${satellite.id}/details`}>
+                                        <IconButton component={Link} to={`/satellites/${satellite.id}/details`}>
                                             <Tooltip title="View satellite details" arrow>
                                                 <ReadMoreIcon color="primary"/>
                                             </Tooltip>
                                         </IconButton>
 
-                                        <IconButton component={Link} sx={{ mr: 3 }} to={`/satellites/${satellite.id}/edit`}>
+                                        <IconButton component={Link} to={`/satellites/${satellite.id}/edit`}>
                                             <EditIcon/>
                                         </IconButton>
 
-                                        <IconButton component={Link} sx={{ mr: 3 }} to={`/satellites/${satellite.id}/delete`}>
+                                        <IconButton component={Link} to={`/satellites/${satellite.id}/delete`}>
                                             <DeleteForeverIcon sx={{ color: "red" }}/>
                                         </IconButton>
                                     </TableCell>

@@ -3,17 +3,12 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { BACKEND_API_URL } from "../../constants";
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SEVERITY_SUCCESS, SHOW_NOTIFICATION } from "../../constants";
 import { Planet } from "../../models/Planet"
+import PubSub from "pubsub-js";
 
 export const AddPlanet = () => {
-    // const navigate = useNavigate();
-
-    const [notification, setNotification] = useState({
-        open: false,
-        message: "",
-        severity: "success"
-    });
+    const navigate = useNavigate();
 
     const [planet, setPlanet] = useState<Planet>({
         name: "",
@@ -26,29 +21,17 @@ export const AddPlanet = () => {
 
     const addPlanet = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
-        await axios.post(`${BACKEND_API_URL}/planets`, planet);
-        setNotification({
-            open: true,
-            message: "Planet added successfully!",
-            severity: "success"
-        });
-        // navigate("/planets");
+        try{
+            await axios.post(`${BACKEND_API_URL}/planets`, planet);
+            PubSub.publish(SHOW_NOTIFICATION, {msg: "Planet added sucessfully!", severity: SEVERITY_SUCCESS});
+            navigate("/planets");
+        }catch(e){
+            PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+        }
     };
 
     return (
         <Container>
-            <Snackbar
-                open={notification.open}
-                autoHideDuration={3000}
-                onClose={() => setNotification({...notification, open: false})}>
-                <Alert
-                    elevation={6}
-                    variant="filled"
-                    onClose={() => setNotification({...notification, open: false})}
-                    severity="success">
-                    {notification.message}
-                </Alert>
-            </Snackbar>
             <Card>
                 <CardContent>
                     <IconButton component={Link} sx={{ mr: 3 }} to={`/planets`}>

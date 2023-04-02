@@ -3,7 +3,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
-import { BACKEND_API_URL } from "../../constants";
+import { BACKEND_API_URL, ERROR_MESSAGE, SEVERITY_ERROR, SEVERITY_SUCCESS, SHOW_NOTIFICATION } from "../../constants";
 import { Satellite } from "../../models/Satellite";
 import { Planet } from "../../models/Planet";
 
@@ -33,9 +33,13 @@ export const AddSatellite = () => {
     useEffect(() => {
         const fetchPlanets = async () => {
             setLoading(true);
-            const response = await fetch(`${BACKEND_API_URL}/planets`);
-			const planets = await response.json();
-            setPlanets(planets);
+            try{
+                const response = await fetch(`${BACKEND_API_URL}/planets`);
+                const planets = await response.json();
+                setPlanets(planets);
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
             setLoading(false);
         };
         fetchPlanets();
@@ -43,8 +47,13 @@ export const AddSatellite = () => {
 
     const addSatellite = async (event: {preventDefault: () => void}) => {
         event.preventDefault();
-        await axios.post(`${BACKEND_API_URL}/satellites/${satellite.planet.id}`, satellite);
-        navigate("/satellites");
+        try{
+            await axios.post(`${BACKEND_API_URL}/satellites/${satellite.planet.id}`, satellite);
+            PubSub.publish(SHOW_NOTIFICATION, {msg: "Satellite added sucessfully!", severity: SEVERITY_SUCCESS});
+            navigate("/satellites");
+        }catch(e){
+            PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+        }
     };
     
     return (
