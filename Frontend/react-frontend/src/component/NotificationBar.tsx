@@ -1,16 +1,22 @@
-import { Alert, Snackbar } from "@mui/material";
+import { Alert, AlertColor, Snackbar } from "@mui/material";
 import { useEffect, useState } from "react";
 import PubSub from "pubsub-js";
 import { SEVERITY_SUCCESS, SHOW_NOTIFICATION } from "../constants";
 
 interface Notification{
     msg: string,
-    severity: string
+    severity: AlertColor
 };
+
+interface NotificationState {
+    open: boolean,
+    message: string,
+    severity: AlertColor,
+}
 
 export const NotificationBar = () => {
 
-    const [notification, setNotification] = useState({
+    const [notification, setNotification] = useState<NotificationState>({
         open: false,
         message: "",
         severity: SEVERITY_SUCCESS
