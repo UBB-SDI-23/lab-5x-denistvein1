@@ -11,6 +11,8 @@ import {
 	IconButton,
 	Tooltip,
     TextField,
+    Button,
+    TableSortLabel,
 } from "@mui/material";
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
@@ -51,6 +53,11 @@ export const AllPlanets = () => {
         fetchPlanets();
     }, []);
 
+    const handleSortPlanets = function() {
+        const newdata = [...planets].sort((p1, p2) => p1.radius > p2.radius ? 1 : -1);
+        setPlanets(newdata);
+    };
+
     return (
         <Container>
             <h1>All planets</h1>
@@ -63,6 +70,12 @@ export const AllPlanets = () => {
 					</Tooltip>
 				</IconButton>
 			)}
+            {!loading && planets.length > 0 && (
+                <Button
+                onClick={handleSortPlanets}>
+                    Sort by Radius
+                </Button>
+            )}
             {!loading && planets.length > 0 && (
                 <div>
                     <TextField
