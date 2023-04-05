@@ -82,7 +82,7 @@ export const UpdateSatellite = () => {
                         <form onSubmit={updateSatellite}>
                             <FormControl sx={{ mb: 2 }} fullWidth>
                                 <InputLabel id="dropdown-label">Planet</InputLabel>
-                                    <Select
+                                <Select
                                     id="dropdown"
                                     labelId="dropdown-label"
                                     value={planetName}
@@ -100,6 +100,7 @@ export const UpdateSatellite = () => {
                                 id="name"
                                 label="Name"
                                 variant="outlined"
+                                placeholder={satellite.name}
                                 fullWidth
                                 sx={{ mb: 2 }}
                                 onChange={(event) => setSatellite({...satellite, name: event.target.value})}/>
@@ -107,6 +108,7 @@ export const UpdateSatellite = () => {
                                 id="radius"
                                 label="Radius"
                                 variant="outlined"
+                                placeholder={satellite.radius.toString()}
                                 fullWidth
                                 sx={{ mb: 2 }}
                                 onChange={(event) => setSatellite({...satellite, radius: parseFloat(event.target.value)})}/>
@@ -114,6 +116,7 @@ export const UpdateSatellite = () => {
                                 id="distance"
                                 label="Distance"
                                 variant="outlined"
+                                placeholder={satellite.distance.toString()}
                                 fullWidth
                                 sx={{ mb: 2 }}
                                 onChange={(event) => setSatellite({...satellite, distance: parseFloat(event.target.value)})}/>
@@ -121,6 +124,7 @@ export const UpdateSatellite = () => {
                                 id="gravity"
                                 label="Gravity"
                                 variant="outlined"
+                                placeholder={satellite.gravity.toString()}
                                 fullWidth
                                 sx={{ mb: 2 }}
                                 onChange={(event) => setSatellite({...satellite, gravity: parseFloat(event.target.value)})}/>
@@ -128,6 +132,7 @@ export const UpdateSatellite = () => {
                                 id="escapeVelocity"
                                 label="Escape Velocity"
                                 variant="outlined"
+                                placeholder={satellite.escapeVelocity.toString()}
                                 fullWidth
                                 sx={{ mb: 2 }}
                                 onChange={(event) => setSatellite({...satellite, escapeVelocity: parseFloat(event.target.value)})}/>
@@ -135,6 +140,7 @@ export const UpdateSatellite = () => {
                                 id="orbitalPeriod"
                                 label="Orbital Period"
                                 variant="outlined"
+                                placeholder={satellite.orbitalPeriod.toString()}
                                 fullWidth
                                 sx={{ mb: 2 }}
                                 onChange={(event) => setSatellite({...satellite, orbitalPeriod: parseFloat(event.target.value)})}/>

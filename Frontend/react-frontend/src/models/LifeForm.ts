@@ -8,5 +8,5 @@ export interface LifeForm{
     energyUse: number;
     friendly: string;
     conscious: string;
-    planetLifeForm?: PlanetLifeForm[];
+    planetLifeForms?: PlanetLifeForm[];
 }

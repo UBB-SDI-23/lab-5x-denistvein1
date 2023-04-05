@@ -1,18 +1,9 @@
 import {
-	TableContainer,
-	Paper,
-	Table,
-	TableHead,
-	TableRow,
-	TableCell,
-	TableBody,
 	CircularProgress,
 	Container,
 	IconButton,
 	Tooltip,
     TextField,
-    Button,
-    TableSortLabel,
 } from "@mui/material";
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
@@ -24,6 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { ReportPlanetLifeFormDTO } from "../../models/dtos/ReportPlanetLifeFormDTO";
 import { ReportPlanetSatelliteDTO } from "../../models/dtos/ReportPlanetSatelliteDTO";
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 export const AllPlanets = () => {
     const [radius, setRadius] = useState(0);
@@ -53,10 +45,45 @@ export const AllPlanets = () => {
         fetchPlanets();
     }, []);
 
-    const handleSortPlanets = function() {
-        const newdata = [...planets].sort((p1, p2) => p1.radius > p2.radius ? 1 : -1);
-        setPlanets(newdata);
-    };
+    const columns: GridColDef[] = [
+        {field: "index", headerName: "#", width: 100},
+        {field: "name", headerName: "Name", width: 150},
+        {field: "radius", headerName: "Radius", width: 150},
+        {field: "temperature", headerName: "Temperature", width: 150},
+        {field: "gravity", headerName: "Gravity", width: 150},
+        {field: "escapeVelocity", headerName: "Escape Velocity", width: 150},
+        {field: "orbitalPeriod", headerName: "Orbital Period", width: 150},
+        {field: "avgLifeFormIq", headerName: "Average Life Form Iq", width: 150},
+        {field: "biggestSatellite", headerName: "Biggest Satellite", width: 150},
+        {field: "operations", headerName: "Operations", width: 150, renderCell: (params) => {
+            return (
+                <>
+                    <IconButton component={Link} to={`/planets/${params.id}/details`}>
+                        <Tooltip title="View planet details" arrow>
+                            <ReadMoreIcon color="primary"/>
+                        </Tooltip>
+                    </IconButton>
+
+                    <IconButton component={Link} to={`/planets/${params.id}/edit`}>
+                        <EditIcon/>
+                    </IconButton>
+
+                    <IconButton component={Link} to={`/planets/${params.id}/delete`}>
+                        <DeleteForeverIcon sx={{ color: "red" }}/>
+                    </IconButton>
+                </>
+            );
+        }},
+    ];
+
+    const rowsWithIndex = planets.filter(planet => planet.radius > radius).map((planet: Planet, index: number) => (
+        {
+            ...planet,
+            index: index + 1,
+            avgLifeFormIq: reportPlanetLifeFormDto.filter(dto => dto.planetName === planet.name).map(filteredDto => filteredDto.avgLifeFormIq),
+            biggestSatellite: reportPlanetSatelliteDto.filter(dto => dto.planetName === planet.name).map(filteredDto => (filteredDto.satelliteName))
+        }
+        ));
 
     return (
         <Container>
@@ -71,78 +98,19 @@ export const AllPlanets = () => {
 				</IconButton>
 			)}
             {!loading && planets.length > 0 && (
-                <Button
-                onClick={handleSortPlanets}>
-                    Sort by Radius
-                </Button>
-            )}
-            {!loading && planets.length > 0 && (
                 <div>
-                    <TextField
-                        id="radius"
-                        label="Radius > than"
-                        variant="outlined"
-                        fullWidth
-                        sx={{ mb: 2 }}
-                        onChange={(event) => setRadius(event.target.value === "" ? 0 : parseFloat(event.target.value))}/>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="center">#</TableCell>
-                                    <TableCell align="center">Name</TableCell>
-                                    <TableCell align="center">Radius</TableCell>
-                                    <TableCell align="center">Temperature</TableCell>
-                                    <TableCell align="center">Gravity</TableCell>
-                                    <TableCell align="center">Escape Velocity</TableCell>
-                                    <TableCell align="center">Orbital Period</TableCell>
-                                    <TableCell align="center">Average Life Form Iq</TableCell>
-                                    <TableCell align="center">Biggest Satellite</TableCell>
-                                    <TableCell align="center">Operations</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {planets.filter(planet => planet.radius > radius).map((planet: Planet, index: number) => (
-                                    <TableRow key={planet.id}>
-                                        <TableCell component="th" scope="row" align="center">
-                                            {index + 1}
-                                        </TableCell>
-                                        <TableCell component="th" scope="row" align="center">
-                                            <Link to={`/planets/${planet.id}/details`} title="View planet details">
-                                                {planet.name}
-                                            </Link>
-                                        </TableCell>
-                                        <TableCell align="center">{planet.radius}</TableCell>
-                                        <TableCell align="center">{planet.temperature}</TableCell>
-                                        <TableCell align="center">{planet.gravity}</TableCell>
-                                        <TableCell align="center">{planet.escapeVelocity}</TableCell>
-                                        <TableCell align="center">{planet.orbitalPeriod}</TableCell>
-                                        <TableCell align="center">{reportPlanetLifeFormDto.filter(dto => dto.planetName === planet.name).map(filteredDto => (
-                                            filteredDto.avgLifeFormIq
-                                        ))}</TableCell>
-                                        <TableCell align="center">{reportPlanetSatelliteDto.filter(dto => dto.planetName === planet.name).map(filteredDto => (
-                                            filteredDto.satelliteName
-                                        ))}</TableCell>
-                                        <TableCell align="center">
-                                            <IconButton component={Link} to={`/planets/${planet.id}/details`}>
-                                                <Tooltip title="View planet details" arrow>
-                                                    <ReadMoreIcon color="primary"/>
-                                                </Tooltip>
-                                            </IconButton>
-
-                                            <IconButton component={Link} to={`/planets/${planet.id}/edit`}>
-                                                <EditIcon/>
-                                            </IconButton>
-
-                                            <IconButton component={Link} to={`/planets/${planet.id}/delete`}>
-                                                <DeleteForeverIcon sx={{ color: "red" }}/>
-                                            </IconButton>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                <TextField
+                    id="radius"
+                    label="Radius > than"
+                    variant="outlined"
+                    fullWidth
+                    sx={{ mb: 2 }}
+                    onChange={(event) => setRadius(event.target.value === "" ? -1 : parseFloat(event.target.value))}/>
+                <DataGrid 
+                    sx={{ width: 1152, height: 600 }}
+                    columns={columns}
+                    rows={rowsWithIndex}                
+                />
                 </div>
             )}
         </Container>

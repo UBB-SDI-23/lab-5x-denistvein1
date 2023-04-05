@@ -7,6 +7,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { LifeForm } from "../../models/LifeForm";
+import { PlanetLifeForm } from "../../models/PlanetFileForm";
 
 export const LifeFormDetails = () => {
     const { lifeFormId } = useParams();
@@ -41,8 +42,8 @@ export const LifeFormDetails = () => {
                     <p>Conscious: {lifeForm?.conscious}</p>
 					<p>Lives on: </p>
                     <ul>
-                        {lifeForm?.planetLifeForm?.map((planetLifeForm) => (
-                            <li key={planetLifeForm.id}>{planetLifeForm.planet.name}</li>
+                        {lifeForm?.planetLifeForms?.map((planetLifeForm: PlanetLifeForm) => (
+                            <li key={planetLifeForm.planet.id}>{planetLifeForm.planet.name}</li>
                         ))}
                     </ul>
                 </CardContent>

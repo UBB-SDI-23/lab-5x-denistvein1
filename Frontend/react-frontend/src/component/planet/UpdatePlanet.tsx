@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, IconButton, TextField, Container } from "@mui/material";
+import { Button, Card, CardContent, IconButton, TextField, Container, InputLabel } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { useEffect, useState } from "react"
@@ -52,16 +52,26 @@ export const UpdatePlanet = () => {
                     </IconButton>
                     <form onSubmit={updatePlanet}>
                         <TextField
+                            id="name"
+                            label="Name"
+                            variant="outlined"
+                            placeholder={planet.name}
+                            fullWidth
+                            sx={{ mb: 2 }}
+                            onChange={(event) => setPlanet({...planet, name: event.target.value})}/>
+                        <TextField
                             id="radius"
                             label="Radius"
                             variant="outlined"
                             fullWidth
+                            placeholder={planet.radius.toString()}
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, radius: parseFloat(event.target.value)})}/>
                         <TextField
                             id="temperature"
                             label="Temperature"
                             variant="outlined"
+                            placeholder={planet.temperature.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, temperature: parseFloat(event.target.value)})}/>
@@ -69,6 +79,7 @@ export const UpdatePlanet = () => {
                             id="gravity"
                             label="Gravity"
                             variant="outlined"
+                            placeholder={planet.gravity.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, gravity: parseFloat(event.target.value)})}/>
@@ -76,6 +87,7 @@ export const UpdatePlanet = () => {
                             id="escapeVelocity"
                             label="Escape Velocity"
                             variant="outlined"
+                            placeholder={planet.escapeVelocity.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, escapeVelocity: parseFloat(event.target.value)})}/>
@@ -83,6 +95,7 @@ export const UpdatePlanet = () => {
                             id="orbitalPeriod"
                             label="Orbital Period"
                             variant="outlined"
+                            placeholder={planet.orbitalPeriod.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, orbitalPeriod: parseFloat(event.target.value)})}/>

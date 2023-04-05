@@ -19,6 +19,7 @@ import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { LifeForm } from "../../models/LifeForm";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 export const AllLifeForms = () => {
     const [loading, setLoading] = useState(false);
@@ -39,6 +40,36 @@ export const AllLifeForms = () => {
         fetchLifeForms();
     }, []);
 
+    const columns: GridColDef[] = [
+        {field: "index", headerName: "#", width: 100},
+        {field: "name", headerName: "Name", width: 150},
+        {field: "iq", headerName: "Iq", width: 150},
+        {field: "energyUse", headerName: "Energy Use", width: 150},
+        {field: "friendly", headerName: "Friendly", width: 150},
+        {field: "conscious", headerName: "Conscious", width: 150},
+        {field: "operations", headerName: "Operations", width: 150, renderCell: (params) => {
+            return (
+                <>
+                    <IconButton component={Link} to={`/lifeForms/${params.id}/details`}>
+                        <Tooltip title="View life form details" arrow>
+                            <ReadMoreIcon color="primary"/>
+                        </Tooltip>
+                    </IconButton>
+
+                    <IconButton component={Link} to={`/lifeForms/${params.id}/edit`}>
+                        <EditIcon/>
+                    </IconButton>
+
+                    <IconButton component={Link} to={`/lifeForms/${params.id}/delete`}>
+                        <DeleteForeverIcon sx={{ color: "red" }}/>
+                    </IconButton>
+                </>
+            );
+        }},
+    ];
+
+    const rows = lifeForms.map((lifeForm: LifeForm, index: number) => ({...lifeForm, index: index + 1}));
+
     return (
         <Container>
             <h1>All Life Forms</h1>
@@ -52,56 +83,11 @@ export const AllLifeForms = () => {
 				</IconButton>
 			)}
             {!loading && lifeForms.length > 0 && (
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell align="center">#</TableCell>
-                                <TableCell align="center">Name</TableCell>
-                                <TableCell align="center">Iq</TableCell>
-                                <TableCell align="center">Lifespan</TableCell>
-                                <TableCell align="center">Energy Use</TableCell>
-                                <TableCell align="center">Friendly</TableCell>
-                                <TableCell align="center">Conscious</TableCell>
-								<TableCell align="center">Operations</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {lifeForms.map((lifeForm: LifeForm, index: number) => (
-                                <TableRow key={lifeForm.id}>
-                                    <TableCell component="th" scope="row" align="center">
-                                        {index + 1}
-                                    </TableCell>
-                                    <TableCell component="th" scope="row" align="center">
-                                        <Link to={`/lifeForms/${lifeForm.id}/details`} title="View life form details">
-                                            {lifeForm.name}
-                                        </Link>
-                                    </TableCell>
-                                    <TableCell align="center">{lifeForm.iq}</TableCell>
-                                    <TableCell align="center">{lifeForm.lifeSpan}</TableCell>
-                                    <TableCell align="center">{lifeForm.energyUse}</TableCell>
-                                    <TableCell align="center">{lifeForm.friendly}</TableCell>
-                                    <TableCell align="center">{lifeForm.conscious}</TableCell>
-                                    <TableCell align="center">
-                                        <IconButton component={Link} to={`/lifeForms/${lifeForm.id}/details`}>
-											<Tooltip title="View life form details" arrow>
-												<ReadMoreIcon color="primary"/>
-											</Tooltip>
-                                        </IconButton>
-
-                                        <IconButton component={Link} to={`/lifeForms/${lifeForm.id}/edit`}>
-                                            <EditIcon/>
-                                        </IconButton>
-
-                                        <IconButton component={Link} to={`/lifeForms/${lifeForm.id}/delete`}>
-                                            <DeleteForeverIcon sx={{ color: "red" }}/>
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <DataGrid 
+                    sx={{ width: 1002, height: 600 }}
+                    columns={columns}
+                    rows={rows}                
+                />
             )}
         </Container>
     );

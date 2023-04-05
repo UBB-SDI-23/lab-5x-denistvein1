@@ -55,6 +55,7 @@ export const UpdateLifeForm = () => {
                             id="iq"
                             label="Iq"
                             variant="outlined"
+                            placeholder={lifeForm.iq.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setLifeForm({...lifeForm, iq: parseInt(event.target.value)})}/>
@@ -62,6 +63,7 @@ export const UpdateLifeForm = () => {
                             id="lifeSpan"
                             label="Lifespan"
                             variant="outlined"
+                            placeholder={lifeForm.lifeSpan.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setLifeForm({...lifeForm, lifeSpan: parseInt(event.target.value)})}/>
@@ -69,6 +71,7 @@ export const UpdateLifeForm = () => {
                             id="energyUse"
                             label="Energy Use"
                             variant="outlined"
+                            placeholder={lifeForm.energyUse.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setLifeForm({...lifeForm, energyUse: parseFloat(event.target.value)})}/>
@@ -76,6 +79,7 @@ export const UpdateLifeForm = () => {
                             id="friendly"
                             label="Friendly"
                             variant="outlined"
+                            placeholder={lifeForm.friendly}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setLifeForm({...lifeForm, friendly: event.target.value})}/>
@@ -83,6 +87,7 @@ export const UpdateLifeForm = () => {
                             id="conscious"
                             label="Conscious"
                             variant="outlined"
+                            placeholder={lifeForm.conscious}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setLifeForm({...lifeForm, conscious: event.target.value})}/>

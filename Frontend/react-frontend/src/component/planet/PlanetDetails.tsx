@@ -7,6 +7,7 @@ import { Planet } from "../../models/Planet";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { PlanetLifeForm } from "../../models/PlanetFileForm";
 
 export const PlanetDetails = () => {
     const { planetId } = useParams();
@@ -47,8 +48,8 @@ export const PlanetDetails = () => {
                     </ul>
 					<p>Life forms: </p>
                     <ul>
-                        {planet?.planetLifeForms?.map((planetLifeForm) => (
-                            <li key={planetLifeForm.id}>{planetLifeForm.lifeForm.name}</li>
+                        {planet?.planetLifeForms?.map((planetLifeForm: PlanetLifeForm) => (
+                            <li key={planetLifeForm.lifeForm.id}>{planetLifeForm.lifeForm.name}</li>
                         ))}
                     </ul>
                 </CardContent>

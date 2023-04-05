@@ -1,15 +1,8 @@
 import {
-	TableContainer,
-	Paper,
-	Table,
 	CircularProgress,
 	Container,
 	IconButton,
 	Tooltip,
-    TableHead,
-    TableRow,
-    TableCell,
-    TableBody,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -19,6 +12,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 export const AllSatellites = () => {
     const [loading, setLoading] = useState(false);
@@ -39,6 +33,37 @@ export const AllSatellites = () => {
         fetchSatellites();
     }, []);
 
+    const columns: GridColDef[] = [
+        {field: "index", headerName: "#", width: 100},
+        {field: "name", headerName: "Name", width: 150},
+        {field: "radius", headerName: "Radius", width: 150},
+        {field: "distance", headerName: "Distance", width: 150},
+        {field: "gravity", headerName: "Gravity", width: 150},
+        {field: "escapeVelocity", headerName: "Escape Velocity", width: 150},
+        {field: "orbitalPeriod", headerName: "Orbital Period", width: 150},
+        {field: "operations", headerName: "Operations", width: 150, renderCell: (params) => {
+            return (
+                <>
+                    <IconButton component={Link} to={`/satellites/${params.id}/details`}>
+                        <Tooltip title="View satellite details" arrow>
+                            <ReadMoreIcon color="primary"/>
+                        </Tooltip>
+                    </IconButton>
+
+                    <IconButton component={Link} to={`/satellites/${params.id}/edit`}>
+                        <EditIcon/>
+                    </IconButton>
+
+                    <IconButton component={Link} to={`/satellites/${params.id}/delete`}>
+                        <DeleteForeverIcon sx={{ color: "red" }}/>
+                    </IconButton>
+                </>
+            );
+        }},
+    ];
+
+    const rows = satellites.map((satellite: Satellite, index: number) => ({...satellite, index: index + 1}));
+
     return (
         <Container>
             <h1>All satellites</h1>
@@ -52,56 +77,11 @@ export const AllSatellites = () => {
                 </IconButton>
             )}
             {!loading && satellites.length > 0 && (
-                <TableContainer component={Paper}>
-                    <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell align="center">#</TableCell>
-                                <TableCell align="center">Name</TableCell>
-                                <TableCell align="center">Radius</TableCell>
-                                <TableCell align="center">Distance</TableCell>
-                                <TableCell align="center">Gravity</TableCell>
-                                <TableCell align="center">Escape Velocity</TableCell>
-                                <TableCell align="center">Orbital Period</TableCell>
-                                <TableCell align="center">Operations</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {satellites.map((satellite: Satellite, index: number) => (
-                                <TableRow key={satellite.id}>
-                                    <TableCell component="th" scope="row" align="center">
-                                        {index + 1}
-                                    </TableCell>
-                                    <TableCell component="th" scope="row" align="center">
-                                        <Link to={`/satellites/${satellite.id}/details`} title="View satellite details">
-                                            {satellite.name}
-                                        </Link>
-                                    </TableCell>
-                                    <TableCell align="center">{satellite.radius}</TableCell>
-                                    <TableCell align="center">{satellite.distance}</TableCell>
-                                    <TableCell align="center">{satellite.gravity}</TableCell>
-                                    <TableCell align="center">{satellite.escapeVelocity}</TableCell>
-                                    <TableCell align="center">{satellite.orbitalPeriod}</TableCell>
-                                    <TableCell>
-                                        <IconButton component={Link} to={`/satellites/${satellite.id}/details`}>
-                                            <Tooltip title="View satellite details" arrow>
-                                                <ReadMoreIcon color="primary"/>
-                                            </Tooltip>
-                                        </IconButton>
-
-                                        <IconButton component={Link} to={`/satellites/${satellite.id}/edit`}>
-                                            <EditIcon/>
-                                        </IconButton>
-
-                                        <IconButton component={Link} to={`/satellites/${satellite.id}/delete`}>
-                                            <DeleteForeverIcon sx={{ color: "red" }}/>
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                <DataGrid 
+                    sx={{ width: 1152, height: 600 }}
+                    columns={columns}
+                    rows={rows}                
+                />
             )}
         </Container>
     );
