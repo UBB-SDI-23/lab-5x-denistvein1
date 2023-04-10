@@ -42,7 +42,6 @@ public class LifeForm {
     @Column(nullable = false)
     @NotBlank(message = "LifeForm conscious cannot be blank")
     private String conscious;
-
     @JsonIgnore
     @OneToMany(mappedBy = "lifeForm", cascade = CascadeType.ALL)
     private List<PlanetLifeForm> planetLifeForms;

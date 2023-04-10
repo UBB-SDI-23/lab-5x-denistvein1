@@ -9,9 +9,10 @@ CREATE OR REPLACE PROCEDURE insert_satellites_to_planet(
     num_satellites integer
 ) LANGUAGE plpgsql AS $$
 BEGIN
-    INSERT INTO satellite(name, radius, distance, gravity, escape_velocity, orbital_period, planet_id)
+    INSERT INTO satellite(name, description, radius, distance, gravity, escape_velocity, orbital_period, planet_id)
     SELECT
         'Satellite_' || num_satellites + i as name,
+        (select get_random_paragraph()) as description,
         round(random() * 2500) + 500 as radius,
         round(random() * 1000000) + 100000 as distance,
         round(random() * 4) + 1 as gravity,

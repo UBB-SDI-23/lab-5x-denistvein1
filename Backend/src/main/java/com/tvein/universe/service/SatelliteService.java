@@ -7,7 +7,6 @@ import com.tvein.universe.exception.SatelliteNotFoundException;
 import com.tvein.universe.repository.PlanetRepository;
 import com.tvein.universe.repository.SatelliteRepository;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;

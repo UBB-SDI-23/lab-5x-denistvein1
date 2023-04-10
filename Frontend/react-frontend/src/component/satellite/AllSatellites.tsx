@@ -57,6 +57,7 @@ export const AllSatellites = () => {
     const columns: GridColDef[] = [
         {field: "index", headerName: "#", width: 100},
         {field: "name", headerName: "Name", width: 150},
+        {field: "description", headerName: "Description", width: 150},
         {field: "radius", headerName: "Radius", width: 150},
         {field: "distance", headerName: "Distance", width: 150},
         {field: "gravity", headerName: "Gravity", width: 150},

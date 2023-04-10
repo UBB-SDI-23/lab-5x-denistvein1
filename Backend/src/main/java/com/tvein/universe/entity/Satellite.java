@@ -3,7 +3,9 @@ package com.tvein.universe.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Getter
@@ -20,6 +22,10 @@ public class Satellite {
     @Column(nullable = false, unique = true)
     @NotBlank(message = "Satellite name cannot be blank")
     private String name;
+    @NonNull
+    @Column(nullable = false, length = 2000)
+    @NotBlank(message = "Satellite description cannot be blank")
+    private String description;
     @NonNull
     @Column(nullable = false)
     @Min(value = 0, message = "Satellite radius cannot be negative")
