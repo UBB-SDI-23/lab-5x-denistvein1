@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -20,9 +19,9 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/api/satellites")
 public class SatelliteController {
 
-    private ISatelliteService satelliteService;
+    private final ISatelliteService satelliteService;
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @PostMapping("/{planetId}")
     public ResponseEntity<Satellite> saveSatellite(@Valid @RequestBody Satellite satellite, @PathVariable Long planetId){
@@ -36,16 +35,15 @@ public class SatelliteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SatelliteDTO>> getSatellites(@RequestParam(required = false) Optional<Double> distance){
-        List<SatelliteDTO> satellites;
-        if(distance.isPresent()){
-            satellites = satelliteService.getSatellitesByDistanceGreaterThan(distance.get()).stream()
-                    .map(satellite -> modelMapper.map(satellite, SatelliteDTO.class)).collect(Collectors.toList());
-        }else{
-            satellites = satelliteService.getSatellites().stream()
-                    .map(satellite -> modelMapper.map(satellite, SatelliteDTO.class)).collect(Collectors.toList());
-        }
+    public ResponseEntity<List<SatelliteDTO>> getSatellites(@RequestParam int pageNumber, @RequestParam int pageSize){
+        List<SatelliteDTO> satellites= satelliteService.getSatellites(pageNumber, pageSize).stream()
+                .map(satellite -> modelMapper.map(satellite, SatelliteDTO.class)).collect(Collectors.toList());
         return new ResponseEntity<>(satellites, HttpStatus.OK);
+    }
+
+    @GetMapping("/size")
+    public ResponseEntity<Long> getSize(){
+        return new ResponseEntity<>(satelliteService.total(), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

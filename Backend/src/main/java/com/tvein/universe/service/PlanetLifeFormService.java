@@ -11,6 +11,7 @@ import com.tvein.universe.repository.LifeFormRepository;
 import com.tvein.universe.repository.PlanetLifeFormRepository;
 import com.tvein.universe.repository.PlanetRepository;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,9 +20,9 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PlanetLifeFormService implements IPlanetLifeFormService{
 
-    private PlanetLifeFormRepository planetLifeFormRepository;
-    private PlanetRepository planetRepository;
-    private LifeFormRepository lifeFormRepository;
+    private final PlanetLifeFormRepository planetLifeFormRepository;
+    private final PlanetRepository planetRepository;
+    private final LifeFormRepository lifeFormRepository;
 
     @Override
     public PlanetLifeForm savePlanetLifeForm(PlanetLifeForm planetLifeForm, Long planetId, Long lifeFormId) {

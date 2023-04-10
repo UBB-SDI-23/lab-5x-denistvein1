@@ -10,11 +10,11 @@ public interface ISatelliteService {
 
     Satellite getSatellite(Long id);
 
-    List<Satellite> getSatellitesByDistanceGreaterThan(double distance);
-
-    List<Satellite> getSatellites();
+    List<Satellite> getSatellites(int pageNumber, int pageSize);
 
     Satellite updateSatellite(Satellite satellite, Long id);
 
     void deleteSatellite(Long id);
+
+    long total();
 }

@@ -7,6 +7,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Satellite } from "../../models/Satellite";
+import axios from "axios";
 
 export const SatelliteDetails = () => {
     const { satelliteId } = useParams();
@@ -15,19 +16,18 @@ export const SatelliteDetails = () => {
     useEffect(() => {
         const fetchSatellite = async () => {
             try{
-                const response = await fetch(`${BACKEND_API_URL}/satellites/${satelliteId}`);
-                const satellite = await response.json();
+                const response = await axios.get(`${BACKEND_API_URL}/satellites/${satelliteId}`);
+                const satellite = await response.data;
                 setSatellite(satellite);   
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }
         };
         fetchSatellite();
-    }, [satelliteId]);
+    }, []);
 
-    console.log("planet name: ", satellite?.planet.name);
     return (
-        <Container>
+        <Container sx={{ marginTop: 6 }}>
             <Card>
                 <CardContent>
                     <IconButton component={Link} sx={{ mr: 3 }} to={`/satellites`}>

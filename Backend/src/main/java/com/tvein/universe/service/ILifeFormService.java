@@ -8,13 +8,15 @@ public interface ILifeFormService {
 
     LifeForm saveLifeForm(LifeForm lifeForm);
 
-    LifeForm getLifeForm(Long id);
+    LifeForm getLifeForm(Long id, int pageNumber, int pageSize);
 
-    List<LifeForm> getLifeFormsByIqGreaterThan(int iq);
-
-    List<LifeForm> getLifeForms();
+    List<LifeForm> getLifeForms(int pageNumber, int pageSize);
 
     LifeForm updateLifeForm(LifeForm lifeForm, Long id);
 
     void deleteLifeForm(Long id);
+
+    long total(Long id);
+
+    long total();
 }

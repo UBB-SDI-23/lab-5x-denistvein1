@@ -20,25 +20,46 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { LifeForm } from "../../models/LifeForm";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import axios from "axios";
+
+interface PageState{
+    isLoading: boolean,
+    data: LifeForm[],
+    total: number,
+    page: number,
+    pageSize: number
+};
 
 export const AllLifeForms = () => {
     const [loading, setLoading] = useState(false);
     const [lifeForms, setLifeForms] = useState<LifeForm[]>([]);
 
+    const [pageState, setPageState] = useState<PageState>({
+        isLoading: false,
+        data: [],
+        total: 0,
+        page: 0,
+        pageSize: 25
+    });
+
     useEffect(() => {
         const fetchLifeForms = async () => {
             setLoading(true);
             try{
-                const response = await fetch(`${BACKEND_API_URL}/lifeForms`);
-                const lifeForms = await response.json();
+                setPageState(old => ({...old, isLoading: true }))
+                const responseLifeForms = await axios.get(`${BACKEND_API_URL}/lifeForms?pageNumber=${pageState.page}&pageSize=${pageState.pageSize}`);
+                const responseRowCount = await axios.get(`${BACKEND_API_URL}/lifeForms/size`);
+                const lifeForms = await responseLifeForms.data;
+                const rowCount = await responseRowCount.data;
                 setLifeForms(lifeForms);
+                setPageState(old => ({...old, isLoading: false, data: lifeForms, total: rowCount}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }
             setLoading(false);
         };
         fetchLifeForms();
-    }, []);
+    }, [pageState.page, pageState.pageSize]);
 
     const columns: GridColDef[] = [
         {field: "index", headerName: "#", width: 100},
@@ -68,7 +89,10 @@ export const AllLifeForms = () => {
         }},
     ];
 
-    const rows = lifeForms.map((lifeForm: LifeForm, index: number) => ({...lifeForm, index: index + 1}));
+    const rows = lifeForms.map((lifeForm: LifeForm, index: number) => ({
+        index: pageState.page * pageState.pageSize + index + 1,
+        ...lifeForm
+    }));
 
     return (
         <Container>
@@ -86,6 +110,16 @@ export const AllLifeForms = () => {
                 <DataGrid 
                     sx={{ width: 1002, height: 600 }}
                     columns={columns}
+                    rowCount={pageState.total}
+                    loading={pageState.isLoading}
+                    pagination
+                    page={pageState.page}
+                    pageSize={pageState.pageSize}
+                    paginationMode="server"
+                    onPageChange={(newPage) => {
+                        setPageState(old => ({ ...old, page: newPage }))
+                      }}
+                      onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, pageSize: newPageSize }))}
                     rows={rows}                
                 />
             )}

@@ -7,8 +7,10 @@ import com.tvein.universe.exception.SatelliteNotFoundException;
 import com.tvein.universe.repository.PlanetRepository;
 import com.tvein.universe.repository.SatelliteRepository;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,13 +45,8 @@ public class SatelliteService implements ISatelliteService{
     }
 
     @Override
-    public List<Satellite> getSatellitesByDistanceGreaterThan(double distance) {
-        return satelliteRepository.findByDistanceGreaterThan(distance);
-    }
-
-    @Override
-    public List<Satellite> getSatellites() {
-        return satelliteRepository.findAll();
+    public List<Satellite> getSatellites(int pageNumber, int pageSize) {
+        return satelliteRepository.findAll(PageRequest.of(pageNumber, pageSize)).getContent();
     }
 
     @Override
@@ -71,5 +68,10 @@ public class SatelliteService implements ISatelliteService{
         }else{
             throw new EmptyResultDataAccessException(1);
         }
+    }
+
+    @Override
+    public long total() {
+        return satelliteRepository.count();
     }
 }

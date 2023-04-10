@@ -13,9 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@NamedEntityGraph(name = "Planet.satellites", attributeNodes = @NamedAttributeNode("satellites"))
 public class Planet {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,5 +48,4 @@ public class Planet {
     @JsonIgnore
     @OneToMany(mappedBy = "planet", cascade = CascadeType.ALL)
     private List<PlanetLifeForm> planetLifeForms;
-
 }

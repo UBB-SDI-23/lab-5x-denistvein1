@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Range;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(indexes = @Index(columnList = "planet_id"))
 public class PlanetLifeForm {
     @EmbeddedId
     private PlanetLifeFormKey id;

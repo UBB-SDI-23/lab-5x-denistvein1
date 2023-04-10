@@ -22,8 +22,8 @@ export const UpdatePlanet = () => {
     useEffect(() => {
         const fetchPlanet =async () => {
             try{
-                const response = await fetch(`${BACKEND_API_URL}/planets/${planetId}`);
-                const planet = await response.json();
+                const response = await axios.get(`${BACKEND_API_URL}/planets/${planetId}`);
+                const planet = await response.data;
                 setPlanet(planet);
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});

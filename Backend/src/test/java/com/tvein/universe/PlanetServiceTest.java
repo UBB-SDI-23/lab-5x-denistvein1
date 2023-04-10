@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Pair;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class PlanetServiceTest {
 
     @Before
     public void setup(){
-        when(planetRepository.findByRadiusGreaterThan(5000)).thenReturn(Arrays.asList(
+        when(planetRepository.findByRadiusGreaterThan(5000, PageRequest.of(0, 2))).thenReturn(Arrays.asList(
                 new Planet(1L, "Earth", 6400.0, 14.0, 1.0, 11.0, 365.25, new ArrayList<>(), new ArrayList<>()),
                 new Planet(2L, "Venus", 6000.0, 464.0, 0.9, 10.0, 225.0, new ArrayList<>(), new ArrayList<>())
         ));
@@ -52,7 +53,7 @@ public class PlanetServiceTest {
 
     @Test
     public void getPlanetsByRadiusGreaterThanTest(){
-        List<Planet> planets = planetService.getPlanetsByRadiusGreaterThan(5000);
+        List<Planet> planets = planetService.getPlanetsByRadiusGreaterThan(0, 2, 5000);
 
         assertEquals("Earth", planets.get(0).getName());
         assertEquals("Venus", planets.get(1).getName());
@@ -60,7 +61,7 @@ public class PlanetServiceTest {
 
     @Test
     public void getPlanetsWithBiggestSatelliteTest(){
-        List<Pair<Planet, Satellite>> report = planetService.getPlanetsWithBiggestSatellite();
+        List<Pair<Planet, Satellite>> report = planetService.getPlanetsWithBiggestSatellite(0, 2);
 
         assertEquals("Phobos", report.get(0).getSecond().getName());
         assertEquals("Moon", report.get(1).getSecond().getName());
@@ -70,7 +71,7 @@ public class PlanetServiceTest {
 
     @Test
     public void getPlanetsByAverageLifeFormIqTest(){
-        List<Pair<Planet, Double>> report = planetService.getPlanetsByAverageLifeFormIq();
+        List<Pair<Planet, Double>> report = planetService.getPlanetsByAverageLifeFormIq(0, 2);
 
         assertEquals(62.5, report.get(1).getSecond());
         assertEquals(7.5, report.get(0).getSecond());

@@ -22,8 +22,8 @@ export const UpdateLifeForm = () => {
     useEffect(() => {
         const fetchLifeForm =async () => {
             try{
-                const response = await fetch(`${BACKEND_API_URL}/lifeForms/${lifeFormId}`);
-                const lifeForm = await response.json();
+                const response = await axios.get(`${BACKEND_API_URL}/lifeForms/${lifeFormId}`);
+                const lifeForm = await response.data;
                 setLifeForm(lifeForm);
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});

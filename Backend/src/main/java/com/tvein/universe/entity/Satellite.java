@@ -10,6 +10,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(indexes = @Index(columnList = "planet_id"))
 public class Satellite {
 
     @Id

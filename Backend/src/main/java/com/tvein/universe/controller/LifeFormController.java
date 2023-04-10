@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -19,30 +18,35 @@ import java.util.Optional;
 @RequestMapping(path = "/api/lifeForms")
 public class LifeFormController {
 
-    private ILifeFormService lifeFormService;
+    private final ILifeFormService lifeFormService;
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @PostMapping
     public ResponseEntity<LifeForm> saveLifeForm(@Valid @RequestBody LifeForm lifeForm){
         return new ResponseEntity<>(lifeFormService.saveLifeForm(lifeForm), HttpStatus.CREATED);
     }
+
     @GetMapping("/{id}")
-    public ResponseEntity<LifeFormDTO> getLifeForm(@PathVariable Long id){
-        LifeForm lifeForm = lifeFormService.getLifeForm(id);
+    public ResponseEntity<LifeFormDTO> getLifeForm(@PathVariable Long id, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "1") int pageSize){
+        LifeForm lifeForm = lifeFormService.getLifeForm(id, pageNumber, pageSize);
         LifeFormDTO lifeFormDTO = modelMapper.map(lifeForm, LifeFormDTO.class);
         return new ResponseEntity<>(lifeFormDTO, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/size")
+    public ResponseEntity<Long> getSize(@PathVariable Long id){
+        return new ResponseEntity<>(lifeFormService.total(id), HttpStatus.OK);
+    }
+
     @GetMapping
-    public ResponseEntity<List<LifeForm>> getLifeForms(@RequestParam(required = false) Optional<Integer> iq){
-        List<LifeForm> lifeForms;
-        if(iq.isPresent()){
-            lifeForms = lifeFormService.getLifeFormsByIqGreaterThan(iq.get());
-        }else{
-            lifeForms = lifeFormService.getLifeForms();
-        }
-        return new ResponseEntity<>(lifeForms, HttpStatus.OK);
+    public ResponseEntity<List<LifeForm>> getLifeForms(@RequestParam int pageNumber, @RequestParam int pageSize){
+        return new ResponseEntity<>(lifeFormService.getLifeForms(pageNumber, pageSize), HttpStatus.OK);
+    }
+
+    @GetMapping("/size")
+    public ResponseEntity<Long> getSize(){
+        return new ResponseEntity<>(lifeFormService.total(), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

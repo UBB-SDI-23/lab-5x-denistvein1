@@ -16,6 +16,15 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { ReportPlanetLifeFormDTO } from "../../models/dtos/ReportPlanetLifeFormDTO";
 import { ReportPlanetSatelliteDTO } from "../../models/dtos/ReportPlanetSatelliteDTO";
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import axios from "axios";
+
+interface PageState{
+    isLoading: boolean,
+    data: Planet[],
+    total: number,
+    page: number,
+    pageSize: number
+};
 
 export const AllPlanets = () => {
     const [radius, setRadius] = useState(0);
@@ -24,26 +33,38 @@ export const AllPlanets = () => {
     const [reportPlanetLifeFormDto, setReportPlanetLifeFormDto] = useState<ReportPlanetLifeFormDTO[]>([]);
     const [reportPlanetSatelliteDto, setReportPlanetSatelliteDto] = useState<ReportPlanetSatelliteDTO[]>([]);
 
+    const [pageState, setPageState] = useState<PageState>({
+        isLoading: false,
+        data: [],
+        total: 0,
+        page: 0,
+        pageSize: 25
+    });
+
     useEffect(() => {
         const fetchPlanets = async () => {
             setLoading(true);
             try{
-                const responsePlanets = await fetch(`${BACKEND_API_URL}/planets`);
-                const responseReportPlanetLifeFormDto = await fetch(`${BACKEND_API_URL}/planets/by-avg-lifeForm-iq`);
-                const responseReportPlanetSatelliteDto = await fetch(`${BACKEND_API_URL}/planets/by-biggest-satellite`);
-                const planets = await responsePlanets.json();
-                const reportPlanetLifeFormDto = await responseReportPlanetLifeFormDto.json();
-                const reportPlanetSatelliteDto = await responseReportPlanetSatelliteDto.json();
+                setPageState(old => ({...old, isLoading: true }))
+                const responsePlanets = await axios.get(`${BACKEND_API_URL}/planets?pageNumber=${pageState.page}&pageSize=${pageState.pageSize}`);
+                const responseReportPlanetLifeFormDto = await axios.get(`${BACKEND_API_URL}/planets/by-avg-lifeForm-iq?pageNumber=${pageState.page}&pageSize=${pageState.pageSize}`);
+                const responseReportPlanetSatelliteDto = await axios.get(`${BACKEND_API_URL}/planets/by-biggest-satellites?pageNumber=${pageState.page}&pageSize=${pageState.pageSize}`);
+                const responseRowCount = await axios.get(`${BACKEND_API_URL}/planets/size`);
+                const planets = await responsePlanets.data;
+                const reportPlanetLifeFormDto = await responseReportPlanetLifeFormDto.data;
+                const reportPlanetSatelliteDto = await responseReportPlanetSatelliteDto.data;
+                const rowCount = await responseRowCount.data;
                 setPlanets(planets);
                 setReportPlanetLifeFormDto(reportPlanetLifeFormDto);
                 setReportPlanetSatelliteDto(reportPlanetSatelliteDto);
+                setPageState(old => ({...old, isLoading: false, data: planets, total: rowCount}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }
             setLoading(false);
         };
         fetchPlanets();
-    }, []);
+    }, [pageState.page, pageState.pageSize]);
 
     const columns: GridColDef[] = [
         {field: "index", headerName: "#", width: 100},
@@ -76,14 +97,14 @@ export const AllPlanets = () => {
         }},
     ];
 
-    const rowsWithIndex = planets.filter(planet => planet.radius > radius).map((planet: Planet, index: number) => (
+    const rows = pageState.data.filter(planet => planet.radius >= radius).map((planet: Planet, index: number) => (
         {
+            index: pageState.page * pageState.pageSize + index + 1,
             ...planet,
-            index: index + 1,
-            avgLifeFormIq: reportPlanetLifeFormDto.filter(dto => dto.planetName === planet.name).map(filteredDto => filteredDto.avgLifeFormIq),
+            avgLifeFormIq: reportPlanetLifeFormDto.filter(dto => dto.planetName === planet.name).map(filteredDto => filteredDto.avgLifeFormIq.toFixed(2)),
             biggestSatellite: reportPlanetSatelliteDto.filter(dto => dto.planetName === planet.name).map(filteredDto => (filteredDto.satelliteName))
         }
-        ));
+    ));
 
     return (
         <Container>
@@ -108,8 +129,18 @@ export const AllPlanets = () => {
                     onChange={(event) => setRadius(event.target.value === "" ? -1 : parseFloat(event.target.value))}/>
                 <DataGrid 
                     sx={{ width: 1152, height: 600 }}
-                    columns={columns}
-                    rows={rowsWithIndex}                
+                    rows={rows}
+                    rowCount={pageState.total}
+                    loading={pageState.isLoading}
+                    pagination
+                    page={pageState.page}
+                    pageSize={pageState.pageSize}
+                    paginationMode="server"
+                    onPageChange={(newPage) => {
+                        setPageState(old => ({ ...old, page: newPage }))
+                      }}
+                      onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, pageSize: newPageSize }))}
+                      columns={columns}
                 />
                 </div>
             )}

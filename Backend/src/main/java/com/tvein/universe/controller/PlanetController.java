@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/api/planets")
 public class PlanetController {
-    private IPlanetService planetService;
-    private IPlanetLifeFormService planetLifeFormService;
-    private ModelMapper modelMapper;
+    private final IPlanetService planetService;
+    private final IPlanetLifeFormService planetLifeFormService;
+    private final ModelMapper modelMapper;
 
     @PostMapping("/{planetId}/lifeForms/{lifeFormId}")
     public ResponseEntity<PlanetLifeForm> savePlanetLifeForm(@Valid @RequestBody PlanetLifeForm planetLifeForm, @PathVariable Long planetId, @PathVariable Long lifeFormId){
@@ -44,38 +44,54 @@ public class PlanetController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
+    @GetMapping("/{id}/size")
+    public ResponseEntity<Long> getSize(@PathVariable Long id, @RequestParam String list){
+        return new ResponseEntity<>(planetService.total(id, list), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
-    public ResponseEntity<PlanetDTO> getPlanet(@PathVariable Long id){
-        Planet planet = planetService.getPlanet(id);
+    public ResponseEntity<PlanetDTO> getPlanet(@PathVariable Long id, @RequestParam(defaultValue = "0") int satellitesPageNumber,
+        @RequestParam(defaultValue = "1") int satellitesPageSize, @RequestParam(defaultValue = "0") int lifeFormsPageNumber, @RequestParam(defaultValue = "1") int lifeFormsPageSize){
+        Planet planet = planetService.getPlanet(id, satellitesPageNumber, satellitesPageSize, lifeFormsPageNumber, lifeFormsPageSize);
         PlanetDTO planetDTO = modelMapper.map(planet, PlanetDTO.class);
         return new ResponseEntity<>(planetDTO, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<Planet>> getPlanets(@RequestParam(required = false) Optional<Double> radius) {
+    public ResponseEntity<List<Planet>> getPlanets(@RequestParam int pageNumber, @RequestParam int pageSize, @RequestParam(required = false) Optional<Double> radius) {
         List<Planet> planets;
         if (radius.isPresent()) {
-            planets = planetService.getPlanetsByRadiusGreaterThan(radius.get());
+            planets = planetService.getPlanetsByRadiusGreaterThan(pageNumber, pageSize, radius.get());
         } else {
-            planets = planetService.getPlanets();
+            planets = planetService.getPlanets(pageNumber, pageSize);
         }
         return new ResponseEntity<>(planets, HttpStatus.OK);
     }
 
-    @GetMapping("/by-biggest-satellite")
-    public ResponseEntity<List<ReportPlanetSatelliteDTO>> getReportSatellite(){
-        List<ReportPlanetSatelliteDTO> report = planetService.getPlanetsWithBiggestSatellite().stream()
+    @GetMapping("/autocomplete")
+    public ResponseEntity<List<Planet>> getPlanets(@RequestParam String query) {
+        return new ResponseEntity<>(planetService.getPlanetsMatching(query), HttpStatus.OK);
+    }
+
+    @GetMapping("/by-biggest-satellites")
+    public ResponseEntity<List<ReportPlanetSatelliteDTO>> getReportSatellite(@RequestParam int pageNumber, @RequestParam int pageSize){
+        List<ReportPlanetSatelliteDTO> report = planetService.getPlanetsWithBiggestSatellite(pageNumber, pageSize).stream()
                 .map(pair -> new ReportPlanetSatelliteDTO(pair.getFirst().getName(), pair.getSecond().getName(), pair.getSecond().getRadius()))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(report, HttpStatus.OK);
     }
 
     @GetMapping("/by-avg-lifeForm-iq")
-    public ResponseEntity<List<ReportPlanetLifeFormDTO>> getReportLifeForm(){
-        List<ReportPlanetLifeFormDTO> report = planetService.getPlanetsByAverageLifeFormIq().stream()
+    public ResponseEntity<List<ReportPlanetLifeFormDTO>> getReportLifeForm(@RequestParam int pageNumber, @RequestParam int pageSize){
+        List<ReportPlanetLifeFormDTO> report = planetService.getPlanetsByAverageLifeFormIq(pageNumber, pageSize).stream()
                 .map(pair -> new ReportPlanetLifeFormDTO(pair.getFirst().getName(), pair.getSecond()))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(report, HttpStatus.OK);
+    }
+
+    @GetMapping("/size")
+    public ResponseEntity<Long> getSize(){
+        return new ResponseEntity<>(planetService.total(), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
