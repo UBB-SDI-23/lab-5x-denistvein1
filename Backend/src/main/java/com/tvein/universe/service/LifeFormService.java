@@ -56,6 +56,11 @@ public class LifeFormService implements ILifeFormService{
     }
 
     @Override
+    public List<LifeForm> getLifeFormsMatching(String query) {
+        return lifeFormRepository.findTop20ByQuery(query);
+    }
+
+    @Override
     public LifeForm updateLifeForm(LifeForm lifeForm, Long id) {
         Optional<LifeForm> lifeFormOptional = lifeFormRepository.findById(id);
         if(lifeFormOptional.isPresent()){

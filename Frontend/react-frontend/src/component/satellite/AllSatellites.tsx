@@ -25,8 +25,6 @@ interface PageState{
 };
 
 export const AllSatellites = () => {
-    const [loading, setLoading] = useState(false);
-
     const [pageState, setPageState] = useState<PageState>({
         isLoading: false,
         data: [],
@@ -37,7 +35,6 @@ export const AllSatellites = () => {
 
     useEffect(() => {
         const fetchSatellites =async () => {
-            setLoading(true);
             try{
                 setPageState(old => ({...old, isLoading: true }))
                 const responseSatellites = await axios.get(`${BACKEND_API_URL}/satellites?page=${pageState.page}&pageSize=${pageState.pageSize}`);
@@ -48,7 +45,6 @@ export const AllSatellites = () => {
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }
-            setLoading(false);
         };
         fetchSatellites();
     }, [pageState.page, pageState.pageSize]);
@@ -95,16 +91,16 @@ export const AllSatellites = () => {
     return (
         <Container>
             <h1>All satellites</h1>
-            {loading && <CircularProgress/>}
-            {!loading && pageState.data.length === 0 && <p>No satellites found</p>}
-            {!loading && (
+            {pageState.isLoading && <CircularProgress/>}
+            {!pageState.isLoading && pageState.data.length === 0 && <p>No satellites found</p>}
+            {!pageState.isLoading && (
                 <IconButton component={Link} sx={{ mr: 3 }} to={`/satellites/add`}>
                     <Tooltip title="Add a new satellite" arrow>
                         <AddIcon color="primary"/>
                     </Tooltip>
                 </IconButton>
             )}
-            {!loading && pageState.data.length > 0 && (
+            {!pageState.isLoading && pageState.data.length > 0 && (
                 <div>
                     <DataGrid 
                         sx={{ width: 1300, height: 600 }}

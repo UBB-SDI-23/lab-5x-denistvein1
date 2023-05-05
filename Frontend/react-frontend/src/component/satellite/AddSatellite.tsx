@@ -32,7 +32,6 @@ export const AddSatellite = () => {
 
     const fetchPlanets = async (query: string) => {
         try{
-            console.log("query: ", query);
             const response = await axios.get(`${BACKEND_API_URL}/planets/autocomplete?query=${query}`);
             const planets = await response.data;
             setPlanets(planets);
@@ -76,7 +75,7 @@ export const AddSatellite = () => {
                     <form onSubmit={addSatellite}>
                         <Autocomplete
                             sx={{ mb: 2}}
-                            id="planet_id"
+                            id="planetId"
                             options={planets}
                             getOptionLabel={(option) => `${option.name}`}
                             renderInput={(params) => <TextField {...params} label="Planet" variant="outlined" />}

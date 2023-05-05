@@ -28,6 +28,11 @@ public class LifeFormController {
         return new ResponseEntity<>(lifeFormService.saveLifeForm(lifeForm), HttpStatus.CREATED);
     }
 
+    @GetMapping("/autocomplete")
+    public ResponseEntity<List<LifeForm>> getPlanets(@RequestParam String query) {
+        return new ResponseEntity<>(lifeFormService.getLifeFormsMatching(query), HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<LifeFormDTO> getLifeForm(@PathVariable Long id, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "1") Integer pageSize){
         LifeForm lifeForm = lifeFormService.getLifeForm(id, page, pageSize);

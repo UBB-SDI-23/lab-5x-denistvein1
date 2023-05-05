@@ -8,6 +8,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { LifeForm } from "../../models/LifeForm";
 import { PlanetLifeForm } from "../../models/PlanetFileForm";
+import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
@@ -57,12 +58,16 @@ export const LifeFormDetails = () => {
     }, [pageState.page, pageState.pageSize]);
 
     const columns: GridColDef[] = [
-        {field: "index", headerName: "#", width: 200},
-        {field: "name", headerName: "Name", width: 200}
+        {field: "index", headerName: "#", width: 100},
+        {field: "name", headerName: "Name", width: 150},
+        {field: "survivability", headerName: "Survivability", width: 150},
+        {field: "adaptability", headerName: "Adaptability", width: 150},
     ];
 
     const rows = lifeForm?.planetLifeForms === undefined ? [] : lifeForm.planetLifeForms.map((planetLifeForm: PlanetLifeForm, index: number) => ({
         index: pageState.page * pageState.pageSize + index + 1,
+        survivability: planetLifeForm.survivability,
+        adaptability: planetLifeForm.adaptability,
         ...planetLifeForm.planet
     }));
 
@@ -81,7 +86,13 @@ export const LifeFormDetails = () => {
                     <p>Friendly: {lifeForm?.friendly}</p>
                     <p>Conscious: {lifeForm?.conscious}</p>
 					<p>Lives on: </p>
-                    {rows.length === 0 && <p>No planets found</p>}
+                    <IconButton
+                        component={Link}
+                        to={`/lifeForms/${lifeFormId}/addPlanet`}>
+                            <Tooltip title="Attach a planet" arrow>
+                                <AddIcon color="primary"/>
+                            </Tooltip>
+                    </IconButton>
                     {rows.length > 0 && 
                         <DataGrid 
                             sx={{ width: 400, height: 400}}

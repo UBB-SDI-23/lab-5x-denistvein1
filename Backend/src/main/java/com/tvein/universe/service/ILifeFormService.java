@@ -13,6 +13,8 @@ public interface ILifeFormService {
 
     List<LifeFormsNoPlanets> getLifeForms(Integer page, Integer pageSize);
 
+    List<LifeForm> getLifeFormsMatching(String query);
+
     LifeForm updateLifeForm(LifeForm lifeForm, Long id);
 
     void deleteLifeForm(Long id);

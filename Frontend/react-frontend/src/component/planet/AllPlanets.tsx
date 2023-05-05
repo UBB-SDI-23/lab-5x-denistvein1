@@ -27,7 +27,6 @@ interface PageState{
 
 export const AllPlanets = () => {
     const [radius, setRadius] = useState(0);
-    const [loading, setLoading] = useState(false);
 
     const [pageState, setPageState] = useState<PageState>({
         isLoading: false,
@@ -39,7 +38,6 @@ export const AllPlanets = () => {
 
     useEffect(() => {
         const fetchPlanets = async () => {
-            setLoading(true);
             try{
                 setPageState(old => ({...old, isLoading: true }))
                 const responsePlanets = await axios.get(`${BACKEND_API_URL}/planets?page=${pageState.page}&pageSize=${pageState.pageSize}&radius=${radius}`);
@@ -50,7 +48,6 @@ export const AllPlanets = () => {
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }
-            setLoading(false);
         };
         fetchPlanets();
     }, [pageState.page, pageState.pageSize, radius]);
@@ -100,9 +97,9 @@ export const AllPlanets = () => {
     return (
         <Container>
             <h1>All planets</h1>
-            {loading && <CircularProgress/>}
-            {!loading && pageState.data.length === 0 && <p>No planets found</p>}
-            {!loading && (
+            {pageState.isLoading && <CircularProgress/>}
+            {!pageState.isLoading && pageState.data.length === 0 && <p>No planets found</p>}
+            {!pageState.isLoading && (
                 <div>
                     <IconButton component={Link} sx={{ mr: 3 }} to={`/planets/add`}>
                         <Tooltip title="Add a new planet" arrow>
@@ -126,7 +123,7 @@ export const AllPlanets = () => {
                     />
                 </div>
 			)}
-            {!loading && pageState.data.length > 0 && (
+            {!pageState.isLoading && pageState.data.length > 0 && (
                 <div>
                     <DataGrid 
                         sx={{ width: 1150, height: 600 }}

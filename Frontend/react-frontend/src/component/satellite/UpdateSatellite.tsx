@@ -89,7 +89,7 @@ export const UpdateSatellite = () => {
                     <form onSubmit={updateSatellite}>
                         <Autocomplete
                             sx={{ mb: 2}}
-                            id="planet_id"
+                            id="planetId"
                             options={planets}
                             getOptionLabel={(option) => `${option.name}`}
                             renderInput={(params) => <TextField {...params} label="Planet" variant="outlined" placeholder={satellite.planet.name} />}

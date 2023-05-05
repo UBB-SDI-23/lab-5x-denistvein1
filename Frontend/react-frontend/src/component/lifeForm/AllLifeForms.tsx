@@ -25,8 +25,6 @@ interface PageState{
 };
 
 export const AllLifeForms = () => {
-    const [loading, setLoading] = useState(false);
-
     const [pageState, setPageState] = useState<PageState>({
         isLoading: false,
         data: [],
@@ -37,7 +35,6 @@ export const AllLifeForms = () => {
 
     useEffect(() => {
         const fetchLifeForms = async () => {
-            setLoading(true);
             try{
                 setPageState(old => ({...old, isLoading: true }))
                 const responseLifeForms = await axios.get(`${BACKEND_API_URL}/lifeForms?page=${pageState.page}&pageSize=${pageState.pageSize}`);
@@ -48,7 +45,6 @@ export const AllLifeForms = () => {
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }
-            setLoading(false);
         };
         fetchLifeForms();
     }, [pageState.page, pageState.pageSize]);
@@ -94,16 +90,16 @@ export const AllLifeForms = () => {
     return (
         <Container>
             <h1>All Life Forms</h1>
-            {loading && <CircularProgress/>}
-            {!loading && pageState.data.length === 0 && <p>No Life Forms found</p>}
-            {!loading && (
+            {pageState.isLoading && <CircularProgress/>}
+            {!pageState.isLoading && pageState.data.length === 0 && <p>No Life Forms found</p>}
+            {!pageState.isLoading && (
 				<IconButton component={Link} sx={{ mr: 3 }} to={`/lifeForms/add`}>
 					<Tooltip title="Add a new life form" arrow>
 						<AddIcon color="primary"/>
 					</Tooltip>
 				</IconButton>
 			)}
-            {!loading && pageState.data.length > 0 && (
+            {!pageState.isLoading && pageState.data.length > 0 && (
                 <div>
                     <DataGrid 
                         sx={{ width: 1000, height: 600 }}

@@ -1,4 +1,4 @@
-import { Card, CardActions, CardContent, IconButton, TableContainer } from "@mui/material";
+import { Card, CardActions, CardContent, IconButton, Tooltip } from "@mui/material";
 import { Container } from "@mui/system";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { PlanetLifeForm } from "../../models/PlanetFileForm";
+import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { Satellite } from "../../models/Satellite";
@@ -71,8 +72,10 @@ export const PlanetDetails = () => {
     ];
 
     const lifeFormColumns: GridColDef[] = [
-        {field: "index", headerName: "#", width: 200},
-        {field: "name", headerName: "Name", width: 200},
+        {field: "index", headerName: "#", width: 100},
+        {field: "name", headerName: "Name", width: 150},
+        {field: "survivability", headerName: "Survivability", width: 150},
+        {field: "adaptability", headerName: "Adaptability", width: 150},
     ];
 
     const satelliteRows = pageState.data?.satellites === undefined ? [] : pageState.data.satellites.map((satellite: Satellite, index: number) => ({
@@ -82,10 +85,10 @@ export const PlanetDetails = () => {
 
     const lifeFormRows = pageState.data?.planetLifeForms === undefined ? [] : pageState.data.planetLifeForms.map((planetLifeForm: PlanetLifeForm, index: number) => ({
         index: pageState.lifeFormsPage * pageState.lifeFormsPageSize + index + 1,
+        survivability: planetLifeForm.survivability,
+        adaptability: planetLifeForm.adaptability,
         ...planetLifeForm.lifeForm
     }));
-
-    console.log(lifeFormRows[0]);
 
     return (
         <Container sx={{ marginTop: 6 }}>
@@ -102,7 +105,7 @@ export const PlanetDetails = () => {
                     <p>Escape Velocity: {pageState.data?.escapeVelocity}</p>
                     <p>Orbital Period: {pageState.data?.orbitalPeriod}</p>
 					<p>Satellites: </p>
-                    {satelliteRows.length === 0 && <p>No satellites found</p>}
+                    {!pageState.isLoading && satelliteRows.length === 0 && <p>No satellites found</p>}
                     {satelliteRows.length > 0 &&
                         <DataGrid 
                             sx={{ width: 400, height: 400}}
@@ -121,7 +124,13 @@ export const PlanetDetails = () => {
                         />
                     }
 					<p>Life forms: </p>
-                    {lifeFormRows.length === 0 && <p>No life forms found</p>}
+                    <IconButton
+                        component={Link}
+                        to={`/planets/${planetId}/addLifeForm`}>
+                            <Tooltip title="Attach a life form" arrow>
+                                <AddIcon color="primary"/>
+                            </Tooltip>
+                    </IconButton>
                     {lifeFormRows.length > 0 && 
                         <DataGrid 
                             sx={{ width: 400, height: 400}}
