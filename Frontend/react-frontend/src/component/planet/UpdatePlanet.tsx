@@ -55,7 +55,7 @@ export const UpdatePlanet = () => {
                             id="name"
                             label="Name"
                             variant="outlined"
-                            placeholder={planet.name}
+                            value={planet.name}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, name: event.target.value})}/>
@@ -64,14 +64,14 @@ export const UpdatePlanet = () => {
                             label="Radius"
                             variant="outlined"
                             fullWidth
-                            placeholder={planet.radius.toString()}
+                            value={planet.radius.toString()}
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, radius: parseFloat(event.target.value)})}/>
                         <TextField
                             id="temperature"
                             label="Temperature"
                             variant="outlined"
-                            placeholder={planet.temperature.toString()}
+                            value={planet.temperature.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, temperature: parseFloat(event.target.value)})}/>
@@ -79,7 +79,7 @@ export const UpdatePlanet = () => {
                             id="gravity"
                             label="Gravity"
                             variant="outlined"
-                            placeholder={planet.gravity.toString()}
+                            value={planet.gravity.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, gravity: parseFloat(event.target.value)})}/>
@@ -87,7 +87,7 @@ export const UpdatePlanet = () => {
                             id="escapeVelocity"
                             label="Escape Velocity"
                             variant="outlined"
-                            placeholder={planet.escapeVelocity.toString()}
+                            value={planet.escapeVelocity.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, escapeVelocity: parseFloat(event.target.value)})}/>
@@ -95,7 +95,7 @@ export const UpdatePlanet = () => {
                             id="orbitalPeriod"
                             label="Orbital Period"
                             variant="outlined"
-                            placeholder={planet.orbitalPeriod.toString()}
+                            value={planet.orbitalPeriod.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setPlanet({...planet, orbitalPeriod: parseFloat(event.target.value)})}/>

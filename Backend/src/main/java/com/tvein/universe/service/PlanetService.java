@@ -1,6 +1,11 @@
 package com.tvein.universe.service;
 
+import com.tvein.universe.Pagination;
 import com.tvein.universe.dto.BulkAddDto;
+import com.tvein.universe.dto.PlanetDTOConverter;
+import com.tvein.universe.dto.PlanetDTONoSatellites;
+import com.tvein.universe.dto.statistics.StatisticsPlanetLifeFormsDTO;
+import com.tvein.universe.dto.statistics.StatisticsPlanetSatellitesDTO;
 import com.tvein.universe.entity.Planet;
 import com.tvein.universe.entity.PlanetLifeForm;
 import com.tvein.universe.entity.Satellite;
@@ -12,7 +17,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.util.Pair;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,33 +38,14 @@ public class PlanetService implements IPlanetService{
     }
 
     @Override
-    public Planet getPlanet(Long id, int satellitesPageNumber, int satellitesPageSize, int lifeFormsPageNumber, int lifeFormsPageSize) {
+    public Planet getPlanet(Long id, Integer satellitesPage, Integer satellitesPageSize, Integer lifeFormsPage, Integer lifeFormsPageSize) {
         Optional<Planet> planetOptional = planetRepository.findById(id);
         if(planetOptional.isPresent()){
             Planet planet = planetOptional.get();
             List<Satellite> oldSatellites = planet.getSatellites();
             List<PlanetLifeForm> oldPlanetLifeForms = planet.getPlanetLifeForms();
-            int sizeSatellites = oldSatellites.size();
-            int sizePlanetLifeForms = oldPlanetLifeForms.size();
-            List<Satellite> newSatellites = new ArrayList<>();
-            List<PlanetLifeForm> newPlanetLifeForms = new ArrayList<>();
-
-            if(sizeSatellites >= satellitesPageNumber * satellitesPageSize){
-                if(sizeSatellites > (satellitesPageNumber + 1) * satellitesPageSize - 1){
-                    newSatellites = oldSatellites.subList(satellitesPageNumber * satellitesPageSize, (satellitesPageNumber + 1) * satellitesPageSize);
-                }else{
-                    newSatellites = oldSatellites.subList(satellitesPageNumber * satellitesPageSize, sizeSatellites);
-                }
-            }
-            if(sizePlanetLifeForms >= lifeFormsPageNumber * lifeFormsPageSize){
-                if(sizePlanetLifeForms > (lifeFormsPageNumber + 1) * lifeFormsPageSize - 1){
-                    newPlanetLifeForms = oldPlanetLifeForms.subList(lifeFormsPageNumber * lifeFormsPageSize, (lifeFormsPageNumber + 1) * lifeFormsPageSize);
-                }else{
-                    newPlanetLifeForms = oldPlanetLifeForms.subList(lifeFormsPageNumber * lifeFormsPageSize, sizePlanetLifeForms);
-                }
-            }
-            planet.setSatellites(newSatellites);
-            planet.setPlanetLifeForms(newPlanetLifeForms);
+            planet.setSatellites(Pagination.paginate(oldSatellites, satellitesPage, satellitesPageSize));
+            planet.setPlanetLifeForms(Pagination.paginate(oldPlanetLifeForms, lifeFormsPage, lifeFormsPageSize));
             return planet;
         }else{
             throw new LifeFormNotFoundException(id);
@@ -66,21 +53,28 @@ public class PlanetService implements IPlanetService{
     }
 
     @Override
-    public List<Planet> getPlanetsByRadiusGreaterThan(int pageNumber, int pageSize, double radius) {
-        return planetRepository.findByRadiusGreaterThan(radius, PageRequest.of(pageNumber, pageSize));
+    public List<PlanetDTONoSatellites> getPlanetsByRadiusGreaterThan(Integer page, Integer pageSize, Double radius) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id"));
+
+        return this.planetRepository.findByRadiusGreaterThan(radius, pageable).stream().map(
+                planet -> PlanetDTOConverter.convertToPlanetDTONoLifeForms(planet,
+                        satelliteRepository.countByPlanetId(planet.getId()))
+        ).collect(Collectors.toList());
     }
 
     @Override
-    public List<Planet> getPlanets(int pageNumber, int pageSIze) {
-        return planetRepository.findAll(PageRequest.of(pageNumber, pageSIze)).getContent();
+    public List<PlanetDTONoSatellites> getPlanets(Integer page, Integer pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id"));
+
+        return this.planetRepository.findAll(pageable).getContent().stream().map(
+                planet -> PlanetDTOConverter.convertToPlanetDTONoLifeForms(planet,
+                        satelliteRepository.countByPlanetId(planet.getId()))
+        ).collect(Collectors.toList());
     }
 
     @Override
     public List<Planet> getPlanetsMatching(String query) {
-        return planetRepository.findAll().stream()
-                .filter(planet -> planet.getName().matches("^" + query + ".*"))
-                .limit(20)
-                .collect(Collectors.toList());
+        return planetRepository.findTop20ByQuery(query);
     }
 
     @Override
@@ -105,20 +99,13 @@ public class PlanetService implements IPlanetService{
     }
 
     @Override
-    public List<Pair<Planet, Satellite>> getPlanetsWithBiggestSatellite(int pageNumber, int pageSize) {
-        List<Pair<Planet, Satellite>> result = new ArrayList<>();
-        planetRepository.findAll(PageRequest.of(pageNumber, pageSize)).getContent()
-            .forEach(planet -> planet.getSatellites().stream().max(Comparator.comparingDouble(Satellite::getRadius))
-            .ifPresent(satellite -> result.add(Pair.of(planet, satellite))));
-        return result;
+    public List<StatisticsPlanetSatellitesDTO> getPlanetsBySatellites(Integer page, Integer pageSize) {
+        return Pagination.paginate(planetRepository.findAllByOrderBySatellitesDesc(), page, pageSize);
     }
 
     @Override
-    public List<Pair<Planet, Double>> getPlanetsByAverageLifeFormIq(int pageNumber, int pageSize) {
-        return planetRepository.findAll(PageRequest.of(pageNumber, pageSize)).stream()
-            .map(planet -> Pair.of(planet, planet.getPlanetLifeForms().stream()
-            .mapToInt(planetLifeForm ->planetLifeForm.getLifeForm().getIq()).average().stream().findFirst().orElse(0)))
-            .collect(Collectors.toList());
+    public List<StatisticsPlanetLifeFormsDTO> getPlanetsByLifeForms(Integer page, Integer pageSize) {
+        return Pagination.paginate(planetRepository.findAllByOrderByPlanetLifeFormsDesc(), page, pageSize);
     }
 
     @Override
@@ -140,17 +127,22 @@ public class PlanetService implements IPlanetService{
     }
 
     @Override
-    public long total(Long id, String list) {
+    public long totalSatellites(Long id) {
         Optional<Planet> planetOptional = planetRepository.findById(id);
         if(planetOptional.isPresent()){
             Planet planet = planetOptional.get();
-            if(list.equals("satellites")){
-                return planet.getSatellites().size();
-            }else if(list.equals("lifeForms")){
-                return planet.getPlanetLifeForms().size();
-            }else{
-                throw new RuntimeException("Planet does not a list of: " + list);
-            }
+            return planet.getSatellites().size();
+        }else{
+            throw new PlanetNotFoundException(id);
+        }
+    }
+
+    @Override
+    public long totalLifeForms(Long id) {
+        Optional<Planet> planetOptional = planetRepository.findById(id);
+        if(planetOptional.isPresent()){
+            Planet planet = planetOptional.get();
+            return planet.getPlanetLifeForms().size();
         }else{
             throw new PlanetNotFoundException(id);
         }
@@ -159,5 +151,10 @@ public class PlanetService implements IPlanetService{
     @Override
     public long total() {
         return planetRepository.count();
+    }
+
+    @Override
+    public long total(Double radius) {
+        return planetRepository.countByRadiusGreaterThan(radius);
     }
 }

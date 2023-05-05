@@ -10,7 +10,7 @@ public interface ISatelliteService {
 
     Satellite getSatellite(Long id);
 
-    List<Satellite> getSatellites(int pageNumber, int pageSize);
+    List<Satellite> getSatellites(Integer pageNumber, Integer pageSize);
 
     Satellite updateSatellite(Satellite satellite, Long id);
 

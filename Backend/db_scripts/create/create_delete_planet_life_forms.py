@@ -1,6 +1,7 @@
 import psycopg2
+from constants import DATABASE, USER, PASSWORD, HOST, PORT
 
-conn = psycopg2.connect(database='db', user='user', password='password', host='localhost', port='5432')
+conn = psycopg2.connect(database=DATABASE, user=USER, password=PASSWORD, host=HOST, port=PORT)
 
 sql_statement = """
 CREATE OR REPLACE PROCEDURE delete_planet_life_forms()
@@ -12,8 +13,13 @@ END;
 $$;
 """
 
-with conn.cursor() as cur:
-    cur.execute(sql_statement)
+try:
+    with conn.cursor() as cursor:
+        cursor.execute(sql_statement)
+    conn.commit()
 
-conn.commit()
-conn.close()
+except Exception as e:
+    print(e)
+finally:
+    if conn:
+        conn.close()

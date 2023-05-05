@@ -8,11 +8,6 @@ import { Satellite } from "../../models/Satellite";
 import { Planet } from "../../models/Planet";
 import { debounce } from "lodash";
 
-interface PageState{
-    page: number,
-    pageSize: number
-};
-
 export const UpdateSatellite = () => {
     const { satelliteId } = useParams();
     const navigate = useNavigate();
@@ -20,6 +15,7 @@ export const UpdateSatellite = () => {
 
     const [satellite, setSatellite] = useState<Satellite>({
         name: "",
+        description: "",
         radius: 0,
         distance: 0,
         gravity: 0,
@@ -109,15 +105,23 @@ export const UpdateSatellite = () => {
                             id="name"
                             label="Name"
                             variant="outlined"
-                            placeholder={satellite.name}
+                            value={satellite.name}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setSatellite({...satellite, name: event.target.value})}/>
                         <TextField
+                            id="description"
+                            label="Description"
+                            variant="outlined"
+                            value={satellite.description}
+                            fullWidth
+                            sx={{ mb: 2 }}
+                            onChange={(event) => setSatellite({...satellite, description: event.target.value})}/>
+                        <TextField
                             id="radius"
                             label="Radius"
                             variant="outlined"
-                            placeholder={satellite.radius.toString()}
+                            value={satellite.radius.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setSatellite({...satellite, radius: parseFloat(event.target.value)})}/>
@@ -125,7 +129,7 @@ export const UpdateSatellite = () => {
                             id="distance"
                             label="Distance"
                             variant="outlined"
-                            placeholder={satellite.distance.toString()}
+                            value={satellite.distance.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setSatellite({...satellite, distance: parseFloat(event.target.value)})}/>
@@ -133,7 +137,7 @@ export const UpdateSatellite = () => {
                             id="gravity"
                             label="Gravity"
                             variant="outlined"
-                            placeholder={satellite.gravity.toString()}
+                            value={satellite.gravity.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setSatellite({...satellite, gravity: parseFloat(event.target.value)})}/>
@@ -141,7 +145,7 @@ export const UpdateSatellite = () => {
                             id="escapeVelocity"
                             label="Escape Velocity"
                             variant="outlined"
-                            placeholder={satellite.escapeVelocity.toString()}
+                            value={satellite.escapeVelocity.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setSatellite({...satellite, escapeVelocity: parseFloat(event.target.value)})}/>
@@ -149,7 +153,7 @@ export const UpdateSatellite = () => {
                             id="orbitalPeriod"
                             label="Orbital Period"
                             variant="outlined"
-                            placeholder={satellite.orbitalPeriod.toString()}
+                            value={satellite.orbitalPeriod.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setSatellite({...satellite, orbitalPeriod: parseFloat(event.target.value)})}/>

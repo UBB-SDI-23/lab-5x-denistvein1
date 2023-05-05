@@ -1,6 +1,7 @@
 package com.tvein.universe.controller;
 
 import com.tvein.universe.dto.LifeFormDTO;
+import com.tvein.universe.dto.LifeFormsNoPlanets;
 import com.tvein.universe.entity.LifeForm;
 import com.tvein.universe.service.ILifeFormService;
 import jakarta.validation.Valid;
@@ -28,8 +29,8 @@ public class LifeFormController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<LifeFormDTO> getLifeForm(@PathVariable Long id, @RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "1") int pageSize){
-        LifeForm lifeForm = lifeFormService.getLifeForm(id, pageNumber, pageSize);
+    public ResponseEntity<LifeFormDTO> getLifeForm(@PathVariable Long id, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "1") Integer pageSize){
+        LifeForm lifeForm = lifeFormService.getLifeForm(id, page, pageSize);
         LifeFormDTO lifeFormDTO = modelMapper.map(lifeForm, LifeFormDTO.class);
         return new ResponseEntity<>(lifeFormDTO, HttpStatus.OK);
     }
@@ -40,8 +41,8 @@ public class LifeFormController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LifeForm>> getLifeForms(@RequestParam int pageNumber, @RequestParam int pageSize){
-        return new ResponseEntity<>(lifeFormService.getLifeForms(pageNumber, pageSize), HttpStatus.OK);
+    public ResponseEntity<List<LifeFormsNoPlanets>> getLifeForms(@RequestParam Integer page, @RequestParam Integer pageSize){
+        return new ResponseEntity<>(lifeFormService.getLifeForms(page, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("/size")

@@ -3,6 +3,7 @@ import {
 	Container,
 	IconButton,
 	Tooltip,
+    Pagination
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -25,7 +26,6 @@ interface PageState{
 
 export const AllSatellites = () => {
     const [loading, setLoading] = useState(false);
-    const [satellites, setSatellites] = useState<Satellite[]>([]);
 
     const [pageState, setPageState] = useState<PageState>({
         isLoading: false,
@@ -40,11 +40,10 @@ export const AllSatellites = () => {
             setLoading(true);
             try{
                 setPageState(old => ({...old, isLoading: true }))
-                const responseSatellites = await axios.get(`${BACKEND_API_URL}/satellites?pageNumber=${pageState.page}&pageSize=${pageState.pageSize}`);
+                const responseSatellites = await axios.get(`${BACKEND_API_URL}/satellites?page=${pageState.page}&pageSize=${pageState.pageSize}`);
                 const responseRowCount = await axios.get(`${BACKEND_API_URL}/satellites/size`);
                 const satellites = await responseSatellites.data;
                 const rowCount = await responseRowCount.data;
-                setSatellites(satellites);
                 setPageState(old => ({...old, isLoading: false, data: satellites, total: rowCount}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
@@ -65,7 +64,7 @@ export const AllSatellites = () => {
         {field: "orbitalPeriod", headerName: "Orbital Period", width: 150},
         {field: "operations", headerName: "Operations", width: 150, renderCell: (params) => {
             return (
-                <>
+                <div>
                     <IconButton component={Link} to={`/satellites/${params.id}/details`}>
                         <Tooltip title="View satellite details" arrow>
                             <ReadMoreIcon color="primary"/>
@@ -79,21 +78,25 @@ export const AllSatellites = () => {
                     <IconButton component={Link} to={`/satellites/${params.id}/delete`}>
                         <DeleteForeverIcon sx={{ color: "red" }}/>
                     </IconButton>
-                </>
+                </div>
             );
         }},
     ];
 
-    const rows = satellites.map((satellite: Satellite, index: number) => ({
+    const rows = pageState.data.map((satellite: Satellite, index: number) => ({
         index: pageState.page * pageState.pageSize + index + 1,
         ...satellite
     }));
+
+    const handlePageChange = (event: any, value: number) => {
+        setPageState(old => ({ ...old, page: value - 1 }));
+    };
 
     return (
         <Container>
             <h1>All satellites</h1>
             {loading && <CircularProgress/>}
-            {!loading && satellites.length === 0 && <p>No satellites found</p>}
+            {!loading && pageState.data.length === 0 && <p>No satellites found</p>}
             {!loading && (
                 <IconButton component={Link} sx={{ mr: 3 }} to={`/satellites/add`}>
                     <Tooltip title="Add a new satellite" arrow>
@@ -101,22 +104,27 @@ export const AllSatellites = () => {
                     </Tooltip>
                 </IconButton>
             )}
-            {!loading && satellites.length > 0 && (
-                <DataGrid 
-                    sx={{ width: 1152, height: 600 }}
-                    columns={columns}
-                    rowCount={pageState.total}
-                    loading={pageState.isLoading}
-                    pagination
-                    page={pageState.page}
-                    pageSize={pageState.pageSize}
-                    paginationMode="server"
-                    onPageChange={(newPage) => {
-                        setPageState(old => ({ ...old, page: newPage }))
-                      }}
-                      onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, pageSize: newPageSize }))}
-                    rows={rows}                
-                />
+            {!loading && pageState.data.length > 0 && (
+                <div>
+                    <DataGrid 
+                        sx={{ width: 1300, height: 600 }}
+                        columns={columns}
+                        rowCount={pageState.total}
+                        loading={pageState.isLoading}
+                        pagination
+                        page={pageState.page}
+                        pageSize={pageState.pageSize}
+                        hideFooter={true}
+                        paginationMode="server"
+                        rows={rows}                
+                    />
+                    <Pagination
+                        count={Math.ceil(pageState.total / pageState.pageSize)}
+                        page={pageState.page + 1}
+                        onChange={handlePageChange}
+                    />
+                </div>
+
             )}
         </Container>
     );

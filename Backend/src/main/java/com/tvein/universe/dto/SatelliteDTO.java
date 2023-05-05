@@ -12,5 +12,4 @@ public class SatelliteDTO {
     private Double escapeVelocity;
     private Double orbitalPeriod;
     private Long planetId;
-
 }

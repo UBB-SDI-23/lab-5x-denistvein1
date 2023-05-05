@@ -1,9 +1,10 @@
 package com.tvein.universe.service;
 
 import com.tvein.universe.dto.BulkAddDto;
+import com.tvein.universe.dto.PlanetDTONoSatellites;
+import com.tvein.universe.dto.statistics.StatisticsPlanetLifeFormsDTO;
+import com.tvein.universe.dto.statistics.StatisticsPlanetSatellitesDTO;
 import com.tvein.universe.entity.Planet;
-import com.tvein.universe.entity.Satellite;
-import org.springframework.data.util.Pair;
 
 import java.util.List;
 
@@ -11,11 +12,11 @@ public interface IPlanetService {
 
     Planet savePlanet(Planet planet);
 
-    Planet getPlanet(Long id, int satellitesPageNumber, int satellitesPageSize, int lifeFormsPageNumber, int lifeFormsPageSize);
+    Planet getPlanet(Long id, Integer satellitesPageNumber, Integer satellitesPageSize, Integer lifeFormsPageNumber, Integer lifeFormsPageSize);
 
-    List<Planet> getPlanetsByRadiusGreaterThan(int pageNumber, int pageSize, double radius);
+    List<PlanetDTONoSatellites> getPlanetsByRadiusGreaterThan(Integer pageNumber, Integer pageSize, Double radius);
 
-    List<Planet> getPlanets(int pageNumber, int pageSIze);
+    List<PlanetDTONoSatellites> getPlanets(Integer pageNumber, Integer pageSize);
 
     List<Planet> getPlanetsMatching(String query);
 
@@ -23,13 +24,17 @@ public interface IPlanetService {
 
     void deletePlanet(Long id);
 
-    List<Pair<Planet, Satellite>> getPlanetsWithBiggestSatellite(int pageNumber, int pageSize);
+    List<StatisticsPlanetSatellitesDTO> getPlanetsBySatellites(Integer pageNumber, Integer pageSize);
 
-    List<Pair<Planet, Double>>  getPlanetsByAverageLifeFormIq(int pageNumber, int pageSize);
+    List<StatisticsPlanetLifeFormsDTO>  getPlanetsByLifeForms(Integer pageNumber, Integer pageSize);
 
     void bulkAddSatellites(Long planetId, List<BulkAddDto> listIds);
 
-    long total(Long id, String list);
+    long totalSatellites(Long id);
+
+    long totalLifeForms(Long id);
 
     long total();
+
+    long total(Double radius);
 }

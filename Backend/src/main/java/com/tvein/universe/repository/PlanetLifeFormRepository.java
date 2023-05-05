@@ -8,7 +8,5 @@ import java.util.Optional;
 
 
 public interface PlanetLifeFormRepository extends JpaRepository<PlanetLifeForm, PlanetLifeFormKey> {
-
     Optional<PlanetLifeForm> findByIdPlanetIdAndLifeFormId(Long planetId, Long lifeFormId);
-
 }

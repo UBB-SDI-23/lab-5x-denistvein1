@@ -11,7 +11,6 @@ import com.tvein.universe.repository.LifeFormRepository;
 import com.tvein.universe.repository.PlanetLifeFormRepository;
 import com.tvein.universe.repository.PlanetRepository;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

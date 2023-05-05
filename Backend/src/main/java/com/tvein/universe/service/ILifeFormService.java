@@ -1,5 +1,6 @@
 package com.tvein.universe.service;
 
+import com.tvein.universe.dto.LifeFormsNoPlanets;
 import com.tvein.universe.entity.LifeForm;
 
 import java.util.List;
@@ -8,9 +9,9 @@ public interface ILifeFormService {
 
     LifeForm saveLifeForm(LifeForm lifeForm);
 
-    LifeForm getLifeForm(Long id, int pageNumber, int pageSize);
+    LifeForm getLifeForm(Long id, Integer page, Integer pageSize);
 
-    List<LifeForm> getLifeForms(int pageNumber, int pageSize);
+    List<LifeFormsNoPlanets> getLifeForms(Integer page, Integer pageSize);
 
     LifeForm updateLifeForm(LifeForm lifeForm, Long id);
 

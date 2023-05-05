@@ -17,27 +17,28 @@ public class Planet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NonNull
-    @Column(nullable = false, unique = true)
+
+    @Column(unique = true)
     @NotBlank(message = "Planet name cannot be blank")
     private String name;
-    @NonNull
-    @Column(nullable = false)
+
+    @Column
     @Min(value = 0, message = "Planet radius cannot be negative")
     private Double radius;
-    @NonNull
-    @Column(nullable = false)
+
+    @Column
+    @Min(value = -273, message = "Planet temperature cannot be below 0 Kelvin")
     private Double temperature;
-    @NonNull
-    @Column(nullable = false)
+
+    @Column
     @Min(value = 0, message = "Planet gravity cannot be negative")
     private Double gravity;
-    @NonNull
-    @Column(nullable = false)
+
+    @Column
     @Min(value = 0, message = "Planet escape velocity cannot be negative")
     private Double escapeVelocity;
-    @NonNull
-    @Column(nullable = false)
+
+    @Column
     @Min(value = 0, message = "Planet orbital period cannot be negative")
     private Double orbitalPeriod;
 

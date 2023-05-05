@@ -43,7 +43,7 @@ export const LifeFormDetails = () => {
         const fetchLifeForm =async () => {
             try{
                 setPageState(old => ({...old, isLoading: true }))
-                const response = await axios.get(`${BACKEND_API_URL}/lifeForms/${lifeFormId}?pageNumber=${pageState.page}&pageSize=${pageState.pageSize}`);
+                const response = await axios.get(`${BACKEND_API_URL}/lifeForms/${lifeFormId}?page=${pageState.page}&pageSize=${pageState.pageSize}`);
                 const responseRowCount = await axios.get(`${BACKEND_API_URL}/lifeForms/${lifeFormId}/size`);
                 const lifeForm = await response.data;
                 const rowCount = await responseRowCount.data;
@@ -84,7 +84,7 @@ export const LifeFormDetails = () => {
                     {rows.length === 0 && <p>No planets found</p>}
                     {rows.length > 0 && 
                         <DataGrid 
-                            sx={{ width: 402, height: 402}}
+                            sx={{ width: 400, height: 400}}
                             columns={columns}
                             rowCount={pageState.total}
                             loading={pageState.isLoading}

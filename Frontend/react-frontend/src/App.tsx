@@ -19,6 +19,9 @@ import { UpdatePlanet } from './component/planet/UpdatePlanet';
 import { UpdateSatellite } from './component/satellite/UpdateSatellite';
 import { UpdateLifeForm } from './component/lifeForm/UpdateLifeForm';
 import { NotificationBar } from './component/NotificationBar';
+import { PlanetStatistics } from './component/statistics/planetStatistics/PlanetStatistics';
+import { BySatellites } from './component/statistics/planetStatistics/BySatellites';
+import { ByLifeForms } from './component/statistics/planetStatistics/ByLifeForms';
 
 function App() {
 	return (
@@ -33,6 +36,9 @@ function App() {
                     <Route path="/lifeForms" element={<AllLifeForms/>}/>
                     <Route path="/planets/:planetId/details" element={<PlanetDetails/>}/>
                     <Route path="/planets/:planetId/edit" element={<UpdatePlanet/>}/>
+                    <Route path='/planets/statistics' element={<PlanetStatistics/>}/>
+                    <Route path='/planets/statistics/by-satellites' element={<BySatellites/>}/>
+                    <Route path='/planets/statistics/by-lifeForms' element={<ByLifeForms/>}/>
                     <Route path="/satellites/:satelliteId/details" element={<SatelliteDetails/>}/>
                     <Route path="/satellites/:satelliteId/edit" element={<UpdateSatellite/>}/>
                     <Route path="/lifeForms/:lifeFormId/details" element={<LifeFormDetails/>}/>

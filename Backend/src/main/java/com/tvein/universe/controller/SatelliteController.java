@@ -35,8 +35,8 @@ public class SatelliteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SatelliteDTO>> getSatellites(@RequestParam int pageNumber, @RequestParam int pageSize){
-        List<SatelliteDTO> satellites= satelliteService.getSatellites(pageNumber, pageSize).stream()
+    public ResponseEntity<List<SatelliteDTO>> getSatellites(@RequestParam Integer page, @RequestParam Integer pageSize){
+        List<SatelliteDTO> satellites= satelliteService.getSatellites(page, pageSize).stream()
                 .map(satellite -> modelMapper.map(satellite, SatelliteDTO.class)).collect(Collectors.toList());
         return new ResponseEntity<>(satellites, HttpStatus.OK);
     }

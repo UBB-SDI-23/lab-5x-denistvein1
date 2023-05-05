@@ -25,7 +25,6 @@ interface PageState{
 
 export const PlanetDetails = () => {
     const { planetId } = useParams();
-    const [planet, setPlanet] = useState<Planet>();
 
     const [pageState, setPageState] = useState<PageState>({
         isLoading: false,
@@ -47,18 +46,17 @@ export const PlanetDetails = () => {
         lifeFormsPageSize: 25
     });
 
-	useEffect(() => {
+    useEffect(() => {
         const fetchPlanet =async () => {
             try{
                 setPageState(old => ({...old, isLoading: true }))
-                const response = await axios.get(`${BACKEND_API_URL}/planets/${planetId}?satellitesPageNumber=${pageState.satellitesPage}&satellitesPageSize=
-                ${pageState.satellitesPageSize}&lifeFormsPageNumber=${pageState.lifeFormsPage}&lifeFormsPageSize=${pageState.lifeFormsPageSize}`);
-                const responseSatellitesRowCount = await axios.get(`${BACKEND_API_URL}/planets/${planetId}/size?list=satellites`);
-                const responseLifeFormsRowCount = await axios.get(`${BACKEND_API_URL}/planets/${planetId}/size?list=lifeForms`);
+                const response = await axios.get(`${BACKEND_API_URL}/planets/${planetId}?satellitesPage=${pageState.satellitesPage}&satellitesPageSize=
+                ${pageState.satellitesPageSize}&lifeFormsPage=${pageState.lifeFormsPage}&lifeFormsPageSize=${pageState.lifeFormsPageSize}`);
+                const responseSatellitesRowCount = await axios.get(`${BACKEND_API_URL}/planets/${planetId}/size/satellites`);
+                const responseLifeFormsRowCount = await axios.get(`${BACKEND_API_URL}/planets/${planetId}/size/lifeForms`);
                 const planet = await response.data
                 const satellitesRowCount = await responseSatellitesRowCount.data;
                 const lifeFormsRowCount = await responseLifeFormsRowCount.data;
-                setPlanet(planet);
                 setPageState(old => ({...old, isLoading: false, data: planet, totalSatellites: satellitesRowCount, totalLifeForms: lifeFormsRowCount}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
@@ -74,18 +72,20 @@ export const PlanetDetails = () => {
 
     const lifeFormColumns: GridColDef[] = [
         {field: "index", headerName: "#", width: 200},
-        {field: "name", headerName: "Name", width: 200}
+        {field: "name", headerName: "Name", width: 200},
     ];
 
-    const satelliteRows = planet?.satellites === undefined ? [] : planet.satellites.map((satellite: Satellite, index: number) => ({
+    const satelliteRows = pageState.data?.satellites === undefined ? [] : pageState.data.satellites.map((satellite: Satellite, index: number) => ({
         index: pageState.satellitesPage * pageState.satellitesPageSize + index + 1,
         ...satellite
     }));
 
-    const lifeFormRows = planet?.planetLifeForms === undefined ? [] : planet.planetLifeForms.map((planetLifeForm: PlanetLifeForm, index: number) => ({
+    const lifeFormRows = pageState.data?.planetLifeForms === undefined ? [] : pageState.data.planetLifeForms.map((planetLifeForm: PlanetLifeForm, index: number) => ({
         index: pageState.lifeFormsPage * pageState.lifeFormsPageSize + index + 1,
         ...planetLifeForm.lifeForm
     }));
+
+    console.log(lifeFormRows[0]);
 
     return (
         <Container sx={{ marginTop: 6 }}>
@@ -95,17 +95,17 @@ export const PlanetDetails = () => {
                         <ArrowBackIcon/>
                     </IconButton>
                     <h1>Planet Details</h1>
-                    <p>Name: {planet?.name}</p>
-                    <p>Radius: {planet?.radius}</p>
-                    <p>Temperature: {planet?.temperature}</p>
-                    <p>Gravity: {planet?.gravity}</p>
-                    <p>Escape Velocity: {planet?.escapeVelocity}</p>
-                    <p>Orbital Period: {planet?.orbitalPeriod}</p>
+                    <p>Name: {pageState.data?.name}</p>
+                    <p>Radius: {pageState.data?.radius}</p>
+                    <p>Temperature: {pageState.data?.temperature}</p>
+                    <p>Gravity: {pageState.data?.gravity}</p>
+                    <p>Escape Velocity: {pageState.data?.escapeVelocity}</p>
+                    <p>Orbital Period: {pageState.data?.orbitalPeriod}</p>
 					<p>Satellites: </p>
                     {satelliteRows.length === 0 && <p>No satellites found</p>}
                     {satelliteRows.length > 0 &&
                         <DataGrid 
-                            sx={{ width: 402, height: 402}}
+                            sx={{ width: 400, height: 400}}
                             columns={satelliteColumns}
                             rowCount={pageState.totalSatellites}
                             loading={pageState.isLoading}
@@ -124,7 +124,7 @@ export const PlanetDetails = () => {
                     {lifeFormRows.length === 0 && <p>No life forms found</p>}
                     {lifeFormRows.length > 0 && 
                         <DataGrid 
-                            sx={{ width: 402, height: 402}}
+                            sx={{ width: 400, height: 400}}
                             columns={lifeFormColumns}
                             rowCount={pageState.totalLifeForms}
                             loading={pageState.isLoading}

@@ -1,15 +1,9 @@
 import {
-	TableContainer,
-	Paper,
-	Table,
-	TableHead,
-	TableRow,
-	TableCell,
-	TableBody,
 	CircularProgress,
 	Container,
 	IconButton,
 	Tooltip,
+    Pagination
 } from "@mui/material";
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
@@ -18,13 +12,13 @@ import AddIcon from "@mui/icons-material/Add";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { LifeForm } from "../../models/LifeForm";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import axios from "axios";
+import { LifeFormDTO } from "../../models/dtos/LifeFormDTO";
 
 interface PageState{
     isLoading: boolean,
-    data: LifeForm[],
+    data: LifeFormDTO[],
     total: number,
     page: number,
     pageSize: number
@@ -32,7 +26,6 @@ interface PageState{
 
 export const AllLifeForms = () => {
     const [loading, setLoading] = useState(false);
-    const [lifeForms, setLifeForms] = useState<LifeForm[]>([]);
 
     const [pageState, setPageState] = useState<PageState>({
         isLoading: false,
@@ -47,11 +40,10 @@ export const AllLifeForms = () => {
             setLoading(true);
             try{
                 setPageState(old => ({...old, isLoading: true }))
-                const responseLifeForms = await axios.get(`${BACKEND_API_URL}/lifeForms?pageNumber=${pageState.page}&pageSize=${pageState.pageSize}`);
+                const responseLifeForms = await axios.get(`${BACKEND_API_URL}/lifeForms?page=${pageState.page}&pageSize=${pageState.pageSize}`);
                 const responseRowCount = await axios.get(`${BACKEND_API_URL}/lifeForms/size`);
                 const lifeForms = await responseLifeForms.data;
                 const rowCount = await responseRowCount.data;
-                setLifeForms(lifeForms);
                 setPageState(old => ({...old, isLoading: false, data: lifeForms, total: rowCount}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
@@ -68,9 +60,10 @@ export const AllLifeForms = () => {
         {field: "energyUse", headerName: "Energy Use", width: 150},
         {field: "friendly", headerName: "Friendly", width: 150},
         {field: "conscious", headerName: "Conscious", width: 150},
+        {field: "planetsSize", headerName: "No. Planets", width: 150},
         {field: "operations", headerName: "Operations", width: 150, renderCell: (params) => {
             return (
-                <>
+                <div>
                     <IconButton component={Link} to={`/lifeForms/${params.id}/details`}>
                         <Tooltip title="View life form details" arrow>
                             <ReadMoreIcon color="primary"/>
@@ -84,21 +77,25 @@ export const AllLifeForms = () => {
                     <IconButton component={Link} to={`/lifeForms/${params.id}/delete`}>
                         <DeleteForeverIcon sx={{ color: "red" }}/>
                     </IconButton>
-                </>
+                </div>
             );
         }},
     ];
 
-    const rows = lifeForms.map((lifeForm: LifeForm, index: number) => ({
+    const rows = pageState.data.map((lifeForm: LifeFormDTO, index: number) => ({
         index: pageState.page * pageState.pageSize + index + 1,
         ...lifeForm
     }));
+
+    const handlePageChange = (event: any, value: number) => {
+        setPageState(old => ({ ...old, page: value - 1 }));
+    };
 
     return (
         <Container>
             <h1>All Life Forms</h1>
             {loading && <CircularProgress/>}
-            {!loading && lifeForms.length === 0 && <p>No Life Forms found</p>}
+            {!loading && pageState.data.length === 0 && <p>No Life Forms found</p>}
             {!loading && (
 				<IconButton component={Link} sx={{ mr: 3 }} to={`/lifeForms/add`}>
 					<Tooltip title="Add a new life form" arrow>
@@ -106,22 +103,26 @@ export const AllLifeForms = () => {
 					</Tooltip>
 				</IconButton>
 			)}
-            {!loading && lifeForms.length > 0 && (
-                <DataGrid 
-                    sx={{ width: 1002, height: 600 }}
-                    columns={columns}
-                    rowCount={pageState.total}
-                    loading={pageState.isLoading}
-                    pagination
-                    page={pageState.page}
-                    pageSize={pageState.pageSize}
-                    paginationMode="server"
-                    onPageChange={(newPage) => {
-                        setPageState(old => ({ ...old, page: newPage }))
-                      }}
-                      onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, pageSize: newPageSize }))}
-                    rows={rows}                
-                />
+            {!loading && pageState.data.length > 0 && (
+                <div>
+                    <DataGrid 
+                        sx={{ width: 1000, height: 600 }}
+                        columns={columns}
+                        rowCount={pageState.total}
+                        loading={pageState.isLoading}
+                        pagination
+                        page={pageState.page}
+                        pageSize={pageState.pageSize}
+                        hideFooter={true}
+                        paginationMode="server"
+                        rows={rows}                
+                    />
+                    <Pagination
+                        count={Math.ceil(pageState.total / pageState.pageSize)}
+                        page={pageState.page + 1}
+                        onChange={handlePageChange}
+                    />
+                </div>
             )}
         </Container>
     );

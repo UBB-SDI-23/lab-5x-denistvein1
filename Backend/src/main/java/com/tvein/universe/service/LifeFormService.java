@@ -1,16 +1,23 @@
 package com.tvein.universe.service;
 
+import com.tvein.universe.Pagination;
+import com.tvein.universe.dto.LifeFormDTOConverter;
+import com.tvein.universe.dto.LifeFormsNoPlanets;
 import com.tvein.universe.entity.LifeForm;
 import com.tvein.universe.entity.PlanetLifeForm;
 import com.tvein.universe.exception.LifeFormNotFoundException;
 import com.tvein.universe.repository.LifeFormRepository;
+import com.tvein.universe.repository.PlanetRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -18,28 +25,20 @@ public class LifeFormService implements ILifeFormService{
 
     private final LifeFormRepository lifeFormRepository;
 
+    private final PlanetRepository planetRepository;
+
     @Override
     public LifeForm saveLifeForm(LifeForm lifeForm) {
         return lifeFormRepository.save(lifeForm);
     }
 
     @Override
-    public LifeForm getLifeForm(Long id, int pageNumber, int pageSize) {
+    public LifeForm getLifeForm(Long id, Integer page, Integer pageSize) {
         Optional<LifeForm> lifeFormOptional = lifeFormRepository.findById(id);
         if(lifeFormOptional.isPresent()){
             LifeForm lifeForm = lifeFormOptional.get();
             List<PlanetLifeForm> oldPlanetLifeForms = lifeForm.getPlanetLifeForms();
-            int size = oldPlanetLifeForms.size();
-            List<PlanetLifeForm> newPlanetLifeForms = new ArrayList<>();
-
-            if(size >= pageNumber * pageSize){
-                if(size > (pageNumber + 1) * pageSize - 1){
-                    newPlanetLifeForms = oldPlanetLifeForms.subList(pageNumber * pageSize, (pageNumber + 1) * pageSize);
-                }else{
-                    newPlanetLifeForms = oldPlanetLifeForms.subList(pageNumber * pageSize, size);
-                }
-            }
-            lifeForm.setPlanetLifeForms(newPlanetLifeForms);
+            lifeForm.setPlanetLifeForms(Pagination.paginate(oldPlanetLifeForms, page, pageSize));
             return lifeForm;
         }else{
             throw new LifeFormNotFoundException(id);
@@ -47,8 +46,13 @@ public class LifeFormService implements ILifeFormService{
     }
 
     @Override
-    public List<LifeForm> getLifeForms(int pageNumber, int pageSize) {
-        return lifeFormRepository.findAll(PageRequest.of(pageNumber, pageSize)).getContent();
+    public List<LifeFormsNoPlanets> getLifeForms(Integer page, Integer pageSize) {
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id"));
+
+        return this.lifeFormRepository.findAll(pageable).getContent().stream().map(
+                lifeForm -> LifeFormDTOConverter.convertToLifeFormDTONoPlanets(lifeForm,
+                        planetRepository.countByPlanetLifeFormsLifeFormId(lifeForm.getId()))
+        ).collect(Collectors.toList());
     }
 
     @Override

@@ -14,6 +14,7 @@ export const AddSatellite = () => {
 
     const [satellite, setSatellite] = useState<Satellite>({
         name: "",
+        description: "",
         radius: 0,
         distance: 0,
         gravity: 0,
@@ -31,6 +32,7 @@ export const AddSatellite = () => {
 
     const fetchPlanets = async (query: string) => {
         try{
+            console.log("query: ", query);
             const response = await axios.get(`${BACKEND_API_URL}/planets/autocomplete?query=${query}`);
             const planets = await response.data;
             setPlanets(planets);
@@ -48,7 +50,7 @@ export const AddSatellite = () => {
 	}, [debouncedFetchPlanets]);
 
     const handleInputChange = (event: any, value: any, reason: any) => {
-		if (reason === "input") {
+		if (reason === "input" && value) {
 			debouncedFetchPlanets(value);
 		}
 	};
@@ -93,6 +95,13 @@ export const AddSatellite = () => {
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setSatellite({...satellite, name: event.target.value})}/>
+                        <TextField
+                            id="description"
+                            label="Description"
+                            variant="outlined"
+                            fullWidth
+                            sx={{ mb: 2 }}
+                            onChange={(event) => setSatellite({...satellite, description: event.target.value})}/>
                         <TextField
                             id="radius"
                             label="Radius"

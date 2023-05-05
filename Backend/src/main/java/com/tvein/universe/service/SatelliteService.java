@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,8 +46,8 @@ public class SatelliteService implements ISatelliteService{
     }
 
     @Override
-    public List<Satellite> getSatellites(int pageNumber, int pageSize) {
-        return satelliteRepository.findAll(PageRequest.of(pageNumber, pageSize)).getContent();
+    public List<Satellite> getSatellites(Integer page, Integer pageSize) {
+        return satelliteRepository.findAll(PageRequest.of(page, pageSize, Sort.by("id"))).getContent();
     }
 
     @Override

@@ -37,6 +37,7 @@ export const SatelliteDetails = () => {
                     <p>Name: {satellite?.name}</p>
                     <p>Radius: {satellite?.radius}</p>
                     <p>Distance: {satellite?.distance}</p>
+                    <p>Description: {satellite?.description}</p>
                     <p>Gravity: {satellite?.gravity}</p>
                     <p>Escape Velocity: {satellite?.escapeVelocity}</p>
                     <p>Orbital Period: {satellite?.orbitalPeriod}</p>

@@ -55,7 +55,7 @@ export const UpdateLifeForm = () => {
                             id="iq"
                             label="Iq"
                             variant="outlined"
-                            placeholder={lifeForm.iq.toString()}
+                            value={lifeForm.iq.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setLifeForm({...lifeForm, iq: parseInt(event.target.value)})}/>
@@ -63,7 +63,7 @@ export const UpdateLifeForm = () => {
                             id="lifeSpan"
                             label="Lifespan"
                             variant="outlined"
-                            placeholder={lifeForm.lifeSpan.toString()}
+                            value={lifeForm.lifeSpan.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setLifeForm({...lifeForm, lifeSpan: parseInt(event.target.value)})}/>
@@ -71,7 +71,7 @@ export const UpdateLifeForm = () => {
                             id="energyUse"
                             label="Energy Use"
                             variant="outlined"
-                            placeholder={lifeForm.energyUse.toString()}
+                            value={lifeForm.energyUse.toString()}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setLifeForm({...lifeForm, energyUse: parseFloat(event.target.value)})}/>
@@ -79,7 +79,7 @@ export const UpdateLifeForm = () => {
                             id="friendly"
                             label="Friendly"
                             variant="outlined"
-                            placeholder={lifeForm.friendly}
+                            value={lifeForm.friendly}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setLifeForm({...lifeForm, friendly: event.target.value})}/>
@@ -87,7 +87,7 @@ export const UpdateLifeForm = () => {
                             id="conscious"
                             label="Conscious"
                             variant="outlined"
-                            placeholder={lifeForm.conscious}
+                            value={lifeForm.conscious}
                             fullWidth
                             sx={{ mb: 2 }}
                             onChange={(event) => setLifeForm({...lifeForm, conscious: event.target.value})}/>

@@ -11,5 +11,4 @@ public class SimpleSatelliteDTO {
     private Double gravity;
     private Double escapeVelocity;
     private Double orbitalPeriod;
-
 }

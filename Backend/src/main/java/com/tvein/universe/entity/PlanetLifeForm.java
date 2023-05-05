@@ -24,13 +24,11 @@ public class PlanetLifeForm {
     @JoinColumn
     private LifeForm lifeForm;
 
-    @NonNull
-    @Column(nullable = false)
+    @Column
     @Range(min = 0, max = 100, message = "Survivability must be between 0 and 100")
     private Integer survivability;
 
-    @NonNull
-    @Column(nullable = false)
+    @Column
     @Range(min=0, max = 100, message = "Adaptability must be between 0 and 100")
     private Integer adaptability;
 }

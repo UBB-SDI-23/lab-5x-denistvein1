@@ -4,7 +4,7 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      - POSTGRES_DB=db
+      - POSTGRES_DB=universe_db
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_ROOT_PASSWORD=password
