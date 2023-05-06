@@ -22,7 +22,6 @@ interface PageState{
 
 export const LifeFormDetails = () => {
     const { lifeFormId } = useParams();
-    const [lifeForm, setLifeForm] = useState<LifeForm>();
 
     const [pageState, setPageState] = useState<PageState>({
         isLoading: false,
@@ -60,7 +59,6 @@ export const LifeFormDetails = () => {
                 setPageState(old => ({...old, isLoading: true }))
                 const response = await axios.get(`${BACKEND_API_URL}/lifeForms/${lifeFormId}?page=${pageState.page}&pageSize=${pageState.pageSize}`);
                 const lifeForm = await response.data;
-                setLifeForm(lifeForm);
                 setPageState(old => ({...old, isLoading: false, data: lifeForm}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
@@ -76,7 +74,7 @@ export const LifeFormDetails = () => {
         {field: "adaptability", headerName: "Adaptability", width: 150},
     ];
 
-    const rows = lifeForm?.planetLifeForms === undefined ? [] : lifeForm.planetLifeForms.map((planetLifeForm: PlanetLifeForm, index: number) => ({
+    const rows = pageState.data?.planetLifeForms === undefined ? [] : pageState.data.planetLifeForms.map((planetLifeForm: PlanetLifeForm, index: number) => ({
         index: pageState.page * pageState.pageSize + index + 1,
         survivability: planetLifeForm.survivability,
         adaptability: planetLifeForm.adaptability,
@@ -95,12 +93,12 @@ export const LifeFormDetails = () => {
                         <ArrowBackIcon/>
                     </IconButton>
                     <h1>Life form Details</h1>
-                    <p>Name: {lifeForm?.name}</p>
-                    <p>Iq: {lifeForm?.iq}</p>
-                    <p>Lifespan: {lifeForm?.lifeSpan}</p>
-                    <p>Energy Use: {lifeForm?.energyUse}</p>
-                    <p>Friendly: {lifeForm?.friendly}</p>
-                    <p>Conscious: {lifeForm?.conscious}</p>
+                    <p>Name: {pageState.data?.name}</p>
+                    <p>Iq: {pageState.data?.iq}</p>
+                    <p>Lifespan: {pageState.data?.lifeSpan}</p>
+                    <p>Energy Use: {pageState.data?.energyUse}</p>
+                    <p>Friendly: {pageState.data?.friendly}</p>
+                    <p>Conscious: {pageState.data?.conscious}</p>
 					<p>Lives on: </p>
                     <IconButton
                         component={Link}
