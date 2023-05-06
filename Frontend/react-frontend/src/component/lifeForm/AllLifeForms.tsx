@@ -34,14 +34,26 @@ export const AllLifeForms = () => {
     });
 
     useEffect(() => {
+        const fetchSize = async () => {
+            try{
+                setPageState(old => ({...old, isLoading: true }))
+                const response = await axios.get(`${BACKEND_API_URL}/lifeForms/size`);
+                const rowCount = await response.data;
+                setPageState(old => ({...old, isLoading: false, total: rowCount}));
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
+        };
+        fetchSize();
+    }, []);
+
+    useEffect(() => {
         const fetchLifeForms = async () => {
             try{
                 setPageState(old => ({...old, isLoading: true }))
                 const responseLifeForms = await axios.get(`${BACKEND_API_URL}/lifeForms?page=${pageState.page}&pageSize=${pageState.pageSize}`);
-                const responseRowCount = await axios.get(`${BACKEND_API_URL}/lifeForms/size`);
                 const lifeForms = await responseLifeForms.data;
-                const rowCount = await responseRowCount.data;
-                setPageState(old => ({...old, isLoading: false, data: lifeForms, total: rowCount}));
+                setPageState(old => ({...old, isLoading: false, data: lifeForms}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }

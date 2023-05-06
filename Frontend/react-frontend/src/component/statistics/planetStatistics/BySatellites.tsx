@@ -30,6 +30,22 @@ export const BySatellites = () => {
         page: 0,
         pageSize: 25
     });
+    
+    useEffect(() => {
+        const fetchStatisticsSize = async () => {
+            setLoading(true);
+            try{
+                setPageState(old => ({...old, isLoading: true }))
+                const response = await axios.get(`${BACKEND_API_URL}/planets/by-satellites/size`);
+                const rowCount = await response.data;
+                setPageState(old => ({...old, total: rowCount}));
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
+            setLoading(false);
+        };
+        fetchStatisticsSize();
+    }, []);
 
     useEffect(() => {
         const fetchStatistics = async () => {
@@ -38,9 +54,7 @@ export const BySatellites = () => {
                 setPageState(old => ({...old, isLoading: true }))
                 const response = await axios.get(`${BACKEND_API_URL}/planets/by-satellites?page=${pageState.page}&pageSize=${pageState.pageSize}`);
                 const statistics = await response.data;
-                const responseRowCount = await axios.get(`${BACKEND_API_URL}/planets/size`);
-                const rowCount = await responseRowCount.data;
-                setPageState(old => ({...old, isLoading: false, data: statistics, total: rowCount}));
+                setPageState(old => ({...old, isLoading: false, data: statistics}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }
@@ -62,7 +76,7 @@ export const BySatellites = () => {
         }
     ));
 
-    const handlePageChange = (event: any, value: number) => {
+    const handlePageChange = async (event: any, value: number) => {
         setPageState(old => ({ ...old, page: value - 1 }));
     };
 
@@ -77,7 +91,7 @@ export const BySatellites = () => {
                 </IconButton>
             )}
             {!loading && pageState.data.length === 0 && <p>No statistics available</p>}
-            {!loading && pageState.data.length > 0 && (
+            {!loading && (
                 <div>
                     <DataGrid 
                         sx={{ width: 400, height: 600 }}

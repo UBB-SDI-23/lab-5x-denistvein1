@@ -56,7 +56,7 @@ public class PlanetService implements IPlanetService{
     public List<PlanetDTONoSatellites> getPlanetsByRadiusGreaterThan(Integer page, Integer pageSize, Double radius) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id"));
 
-        return this.planetRepository.findByRadiusGreaterThan(radius, pageable).stream().map(
+        return planetRepository.findByRadiusGreaterThan(radius, pageable).stream().map(
                 planet -> PlanetDTOConverter.convertToPlanetDTONoLifeForms(planet,
                         satelliteRepository.countByPlanetId(planet.getId()))
         ).collect(Collectors.toList());
@@ -66,7 +66,7 @@ public class PlanetService implements IPlanetService{
     public List<PlanetDTONoSatellites> getPlanets(Integer page, Integer pageSize) {
         Pageable pageable = PageRequest.of(page, pageSize, Sort.by("id"));
 
-        return this.planetRepository.findAll(pageable).getContent().stream().map(
+        return planetRepository.findAll(pageable).getContent().stream().map(
                 planet -> PlanetDTOConverter.convertToPlanetDTONoLifeForms(planet,
                         satelliteRepository.countByPlanetId(planet.getId()))
         ).collect(Collectors.toList());
@@ -104,8 +104,18 @@ public class PlanetService implements IPlanetService{
     }
 
     @Override
+    public Integer getPlanetsBySatellitesSize() {
+        return planetRepository.findAllByOrderBySatellitesDesc().size();
+    }
+
+    @Override
     public List<StatisticsPlanetLifeFormsDTO> getPlanetsByLifeForms(Integer page, Integer pageSize) {
         return Pagination.paginate(planetRepository.findAllByOrderByPlanetLifeFormsDesc(), page, pageSize);
+    }
+
+    @Override
+    public Integer getPlanetsByLifeFormsSize() {
+        return planetRepository.findAllByOrderByPlanetLifeFormsDesc().size();
     }
 
     @Override

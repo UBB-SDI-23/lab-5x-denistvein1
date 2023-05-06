@@ -40,16 +40,28 @@ export const LifeFormDetails = () => {
         pageSize: 25
     });
 
+    useEffect(() => {
+        const fetchSize = async () => {
+            try{
+                setPageState(old => ({...old, isLoading: true }))
+                const response = await axios.get(`${BACKEND_API_URL}/lifeForms/${lifeFormId}/size`);
+                const rowCount = await response.data;
+                setPageState(old => ({...old, isLoading: false, total: rowCount}));
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
+        };
+        fetchSize();
+    }, []);
+
 	useEffect(() => {
         const fetchLifeForm =async () => {
             try{
                 setPageState(old => ({...old, isLoading: true }))
                 const response = await axios.get(`${BACKEND_API_URL}/lifeForms/${lifeFormId}?page=${pageState.page}&pageSize=${pageState.pageSize}`);
-                const responseRowCount = await axios.get(`${BACKEND_API_URL}/lifeForms/${lifeFormId}/size`);
                 const lifeForm = await response.data;
-                const rowCount = await responseRowCount.data;
                 setLifeForm(lifeForm);
-                setPageState(old => ({...old, isLoading: false, data: lifeForm, total: rowCount}));
+                setPageState(old => ({...old, isLoading: false, data: lifeForm}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }

@@ -32,16 +32,28 @@ export const AllSatellites = () => {
         page: 0,
         pageSize: 25
     });
+    
+    useEffect(() => {
+        const fetchSize = async () => {
+            try{
+                setPageState(old => ({...old, isLoading: true }))
+                const response = await axios.get(`${BACKEND_API_URL}/satellites/size`);
+                const rowCount = await response.data;
+                setPageState(old => ({...old, isLoading: false, total: rowCount}));
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
+        };
+        fetchSize();
+    }, []);
 
     useEffect(() => {
         const fetchSatellites =async () => {
             try{
                 setPageState(old => ({...old, isLoading: true }))
                 const responseSatellites = await axios.get(`${BACKEND_API_URL}/satellites?page=${pageState.page}&pageSize=${pageState.pageSize}`);
-                const responseRowCount = await axios.get(`${BACKEND_API_URL}/satellites/size`);
                 const satellites = await responseSatellites.data;
-                const rowCount = await responseRowCount.data;
-                setPageState(old => ({...old, isLoading: false, data: satellites, total: rowCount}));
+                setPageState(old => ({...old, isLoading: false, data: satellites}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }

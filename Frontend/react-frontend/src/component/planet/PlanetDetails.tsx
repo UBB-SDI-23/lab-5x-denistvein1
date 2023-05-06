@@ -48,17 +48,29 @@ export const PlanetDetails = () => {
     });
 
     useEffect(() => {
+        const fetchSize = async () => {
+            try{
+                setPageState(old => ({...old, isLoading: true }))
+                const responseSatellitesRowCount = await axios.get(`${BACKEND_API_URL}/planets/${planetId}/size/satellites`);
+                const responseLifeFormsRowCount = await axios.get(`${BACKEND_API_URL}/planets/${planetId}/size/lifeForms`);
+                const satellitesRowCount = await responseSatellitesRowCount.data;
+                const lifeFormsRowCount = await responseLifeFormsRowCount.data;
+                setPageState(old => ({...old, isLoading: false, totalSatellites: satellitesRowCount, totalLifeForms: lifeFormsRowCount}));
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
+        };
+        fetchSize();
+    }, []);
+
+    useEffect(() => {
         const fetchPlanet =async () => {
             try{
                 setPageState(old => ({...old, isLoading: true }))
                 const response = await axios.get(`${BACKEND_API_URL}/planets/${planetId}?satellitesPage=${pageState.satellitesPage}&satellitesPageSize=
                 ${pageState.satellitesPageSize}&lifeFormsPage=${pageState.lifeFormsPage}&lifeFormsPageSize=${pageState.lifeFormsPageSize}`);
-                const responseSatellitesRowCount = await axios.get(`${BACKEND_API_URL}/planets/${planetId}/size/satellites`);
-                const responseLifeFormsRowCount = await axios.get(`${BACKEND_API_URL}/planets/${planetId}/size/lifeForms`);
                 const planet = await response.data
-                const satellitesRowCount = await responseSatellitesRowCount.data;
-                const lifeFormsRowCount = await responseLifeFormsRowCount.data;
-                setPageState(old => ({...old, isLoading: false, data: planet, totalSatellites: satellitesRowCount, totalLifeForms: lifeFormsRowCount}));
+                setPageState(old => ({...old, isLoading: false, data: planet}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }

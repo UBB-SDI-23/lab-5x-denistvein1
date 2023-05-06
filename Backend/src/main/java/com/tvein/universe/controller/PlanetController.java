@@ -90,9 +90,19 @@ public class PlanetController {
         return new ResponseEntity<>(planetService.getPlanetsBySatellites(page, pageSize), HttpStatus.OK);
     }
 
+    @GetMapping("/by-satellites/size")
+    public ResponseEntity<Integer> getStatisticsSatellitesSize(){
+        return new ResponseEntity<>(planetService.getPlanetsBySatellitesSize(), HttpStatus.OK);
+    }
+
     @GetMapping("/by-life-forms")
     public ResponseEntity<List<StatisticsPlanetLifeFormsDTO>> getStatisticsLifeForms(@RequestParam Integer page, @RequestParam Integer pageSize){
         return new ResponseEntity<>(planetService.getPlanetsByLifeForms(page, pageSize), HttpStatus.OK);
+    }
+
+    @GetMapping("/by-life-forms/size")
+    public ResponseEntity<Integer> getStatisticsLifeFormsSize(){
+        return new ResponseEntity<>(planetService.getPlanetsByLifeFormsSize(), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

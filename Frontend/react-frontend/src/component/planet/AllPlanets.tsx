@@ -37,14 +37,26 @@ export const AllPlanets = () => {
     });
 
     useEffect(() => {
+        const fetchSize = async () => {
+            try{
+                setPageState(old => ({...old, isLoading: true }))
+                const response = await axios.get(`${BACKEND_API_URL}/planets/size?radius=${radius}`);
+                const rowCount = await response.data;
+                setPageState(old => ({...old, isLoading: false, total: rowCount}));
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
+        };
+        fetchSize();
+    }, [radius]);
+
+    useEffect(() => {
         const fetchPlanets = async () => {
             try{
                 setPageState(old => ({...old, isLoading: true }))
                 const responsePlanets = await axios.get(`${BACKEND_API_URL}/planets?page=${pageState.page}&pageSize=${pageState.pageSize}&radius=${radius}`);
-                const responseRowCount = await axios.get(`${BACKEND_API_URL}/planets/size?radius=${radius}`);
                 const planets = await responsePlanets.data;
-                const rowCount = await responseRowCount.data;
-                setPageState(old => ({...old, isLoading: false, data: planets, total: rowCount}));
+                setPageState(old => ({...old, isLoading: false, data: planets}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }

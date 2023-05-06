@@ -30,6 +30,22 @@ export const ByLifeForms = () => {
         page: 0,
         pageSize: 25
     });
+    
+    useEffect(() => {
+        const fetchStatisticsSize = async () => {
+            setLoading(true);
+            try{
+                setPageState(old => ({...old, isLoading: true }))
+                const response = await axios.get(`${BACKEND_API_URL}/planets/by-life-forms/size`);
+                const rowCount = await response.data;
+                setPageState(old => ({...old, total: rowCount}));
+            }catch(e){
+                PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
+            }
+            setLoading(false);
+        };
+        fetchStatisticsSize();
+    }, []);
 
     useEffect(() => {
         const fetchStatistics = async () => {
@@ -38,9 +54,7 @@ export const ByLifeForms = () => {
                 setPageState(old => ({...old, isLoading: true }))
                 const response = await axios.get(`${BACKEND_API_URL}/planets/by-life-forms?page=${pageState.page}&pageSize=${pageState.pageSize}`);
                 const statistics = await response.data;
-                const responseRowCount = await axios.get(`${BACKEND_API_URL}/planets/size`);
-                const rowCount = await responseRowCount.data;
-                setPageState(old => ({...old, isLoading: false, data: statistics, total: rowCount}));
+                setPageState(old => ({...old, isLoading: false, data: statistics}));
             }catch(e){
                 PubSub.publish(SHOW_NOTIFICATION, {msg: ERROR_MESSAGE, severity: SEVERITY_ERROR});
             }

@@ -26,7 +26,11 @@ public interface IPlanetService {
 
     List<StatisticsPlanetSatellitesDTO> getPlanetsBySatellites(Integer pageNumber, Integer pageSize);
 
+    Integer getPlanetsBySatellitesSize();
+
     List<StatisticsPlanetLifeFormsDTO>  getPlanetsByLifeForms(Integer pageNumber, Integer pageSize);
+
+    Integer getPlanetsByLifeFormsSize();
 
     void bulkAddSatellites(Long planetId, List<BulkAddDto> listIds);
 

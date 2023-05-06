@@ -21,7 +21,7 @@ public class CustomPlanetRepositoryImpl implements CustomPlanetRepository{
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<StatisticsPlanetSatellitesDTO> criteriaQuery = criteriaBuilder.createQuery(StatisticsPlanetSatellitesDTO.class);
         Root<Planet> root = criteriaQuery.from(Planet.class);
-        Join<Planet, Satellite> planetSatelliteJoin = root.join("satellites", JoinType.LEFT);
+        Join<Planet, Satellite> planetSatelliteJoin = root.join("satellites", JoinType.INNER);
 
         criteriaQuery.select(criteriaBuilder.construct(
                 StatisticsPlanetSatellitesDTO.class,
@@ -39,8 +39,8 @@ public class CustomPlanetRepositoryImpl implements CustomPlanetRepository{
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<StatisticsPlanetLifeFormsDTO> criteriaQuery = criteriaBuilder.createQuery(StatisticsPlanetLifeFormsDTO.class);
         Root<Planet> root = criteriaQuery.from(Planet.class);
-        Join<Planet, PlanetLifeForm> planetPlanetLifeFormJoin = root.join("planetLifeForms", JoinType.LEFT);
-        Join<PlanetLifeForm, LifeForm> planetLifeFormLifeFormJoin = planetPlanetLifeFormJoin.join("lifeForm", JoinType.LEFT);
+        Join<Planet, PlanetLifeForm> planetPlanetLifeFormJoin = root.join("planetLifeForms", JoinType.INNER);
+        Join<PlanetLifeForm, LifeForm> planetLifeFormLifeFormJoin = planetPlanetLifeFormJoin.join("lifeForm", JoinType.INNER);
 
         criteriaQuery.select(criteriaBuilder.construct(
                 StatisticsPlanetLifeFormsDTO.class,
