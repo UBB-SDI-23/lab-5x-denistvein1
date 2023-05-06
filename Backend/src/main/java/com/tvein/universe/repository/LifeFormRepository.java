@@ -10,6 +10,6 @@ public interface LifeFormRepository extends JpaRepository<LifeForm, Long> {
     @Query(value = "SELECT * FROM life_form " +
             "WHERE to_tsvector('english', name) @@ to_tsquery('english', replace(?1, ' ', ':* & ') || ':*') " +
             "OR name LIKE ('%' || ?1 || '%') ORDER BY ts_rank(to_tsvector('english', name), " +
-            "to_tsquery('english', replace(?1, ' ', ':* & ') || ':*')) DESC LIMIT 20", nativeQuery = true)
+            "to_tsquery('english', replace(?1, ' ', ':* & ') || ':*')) LIMIT 10", nativeQuery = true)
     List<LifeForm> findTop20ByQuery(String query);
 }
