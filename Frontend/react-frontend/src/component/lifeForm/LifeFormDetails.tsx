@@ -1,4 +1,4 @@
-import { Card, CardActions, CardContent, IconButton, Tooltip } from "@mui/material";
+import { Card, CardActions, CardContent, IconButton, Tooltip, Pagination } from "@mui/material";
 import { Container } from "@mui/system";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -71,6 +71,10 @@ export const LifeFormDetails = () => {
         ...planetLifeForm.planet
     }));
 
+    const handlePageChange = (event: any, value: number) => {
+        setPageState(old => ({ ...old, page: value - 1 }));
+    };
+
     return (
         <Container sx={{ marginTop: 6 }}>
             <Card>
@@ -94,21 +98,26 @@ export const LifeFormDetails = () => {
                             </Tooltip>
                     </IconButton>
                     {rows.length > 0 && 
-                        <DataGrid 
-                            sx={{ width: 400, height: 400}}
-                            columns={columns}
-                            rowCount={pageState.total}
-                            loading={pageState.isLoading}
-                            pagination
-                            page={pageState.page}
-                            pageSize={pageState.pageSize}
-                            paginationMode="server"
-                            onPageChange={(newPage) => {
-                                setPageState(old => ({ ...old, page: newPage }))
-                            }}
-                            onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, pageSize: newPageSize }))}
-                            rows={rows}          
-                        />
+                        <div>
+                            <DataGrid 
+                                sx={{ width: 400, height: 400}}
+                                columns={columns}
+                                rowCount={pageState.total}
+                                loading={pageState.isLoading}
+                                pagination
+                                page={pageState.page}
+                                pageSize={pageState.pageSize}
+                                paginationMode="server"
+                                hideFooter={true}
+                                rows={rows}          
+                            />
+                            <Pagination
+                                count={Math.ceil(pageState.total / pageState.pageSize)}
+                                page={pageState.page + 1}
+                                onChange={handlePageChange}
+                            />
+                        </div>
+
                     }
                 </CardContent>
                 <CardActions>

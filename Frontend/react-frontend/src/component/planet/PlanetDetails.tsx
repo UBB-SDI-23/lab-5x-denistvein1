@@ -1,4 +1,4 @@
-import { Card, CardActions, CardContent, IconButton, Tooltip } from "@mui/material";
+import { Card, CardActions, CardContent, IconButton, Tooltip, Pagination } from "@mui/material";
 import { Container } from "@mui/system";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -90,6 +90,14 @@ export const PlanetDetails = () => {
         ...planetLifeForm.lifeForm
     }));
 
+    const handleSatellitesPageChange = (event: any, value: number) => {
+        setPageState(old => ({ ...old, satellitesPage: value - 1 }));
+    };
+
+    const handleLifeFormsPageChange = (event: any, value: number) => {
+        setPageState(old => ({ ...old, lifeFormsPage: value - 1 }));
+    };
+
     return (
         <Container sx={{ marginTop: 6 }}>
             <Card>
@@ -107,21 +115,25 @@ export const PlanetDetails = () => {
 					<p>Satellites: </p>
                     {!pageState.isLoading && satelliteRows.length === 0 && <p>No satellites found</p>}
                     {satelliteRows.length > 0 &&
-                        <DataGrid 
-                            sx={{ width: 400, height: 400}}
-                            columns={satelliteColumns}
-                            rowCount={pageState.totalSatellites}
-                            loading={pageState.isLoading}
-                            pagination
-                            page={pageState.satellitesPage}
-                            pageSize={pageState.satellitesPageSize}
-                            paginationMode="server"
-                            onPageChange={(newPage) => {
-                                setPageState(old => ({ ...old, satellitesPage: newPage }))
-                            }}
-                            onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, satellitesPageSize: newPageSize }))}
-                            rows={satelliteRows}          
-                        />
+                        <div>
+                            <DataGrid 
+                                sx={{ width: 400, height: 400}}
+                                columns={satelliteColumns}
+                                rowCount={pageState.totalSatellites}
+                                loading={pageState.isLoading}
+                                pagination
+                                hideFooter={true}
+                                page={pageState.satellitesPage}
+                                pageSize={pageState.satellitesPageSize}
+                                paginationMode="server"
+                                rows={satelliteRows}          
+                            />                     
+                            <Pagination
+                                count={Math.ceil(pageState.totalSatellites / pageState.satellitesPageSize)}
+                                page={pageState.satellitesPage + 1}
+                                onChange={handleSatellitesPageChange}
+                            />
+                        </div>
                     }
 					<p>Life forms: </p>
                     <IconButton
@@ -132,21 +144,26 @@ export const PlanetDetails = () => {
                             </Tooltip>
                     </IconButton>
                     {lifeFormRows.length > 0 && 
-                        <DataGrid 
-                            sx={{ width: 400, height: 400}}
-                            columns={lifeFormColumns}
-                            rowCount={pageState.totalLifeForms}
-                            loading={pageState.isLoading}
-                            pagination
-                            page={pageState.lifeFormsPage}
-                            pageSize={pageState.lifeFormsPageSize}
-                            paginationMode="server"
-                            onPageChange={(newPage) => {
-                                setPageState(old => ({ ...old, lifeFormsPage: newPage }))
-                            }}
-                            onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, lifeFormsPageSize: newPageSize }))}
-                            rows={lifeFormRows}          
-                        />
+                        <div>
+                            <DataGrid 
+                                sx={{ width: 400, height: 400}}
+                                columns={lifeFormColumns}
+                                rowCount={pageState.totalLifeForms}
+                                loading={pageState.isLoading}
+                                pagination
+                                page={pageState.lifeFormsPage}
+                                pageSize={pageState.lifeFormsPageSize}
+                                paginationMode="server"
+                                hideFooter={true}
+                                rows={lifeFormRows}          
+                            />
+                            <Pagination
+                                count={Math.ceil(pageState.totalLifeForms / pageState.lifeFormsPageSize)}
+                                page={pageState.lifeFormsPage + 1}
+                                onChange={handleLifeFormsPageChange}
+                            />
+                        </div>
+
                     }
                 </CardContent>
                 <CardActions>

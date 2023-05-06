@@ -2,7 +2,7 @@ import {
 	CircularProgress,
 	Container,
 	IconButton,
-    TextField,
+    Pagination,
 } from "@mui/material";
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
@@ -62,6 +62,10 @@ export const BySatellites = () => {
         }
     ));
 
+    const handlePageChange = (event: any, value: number) => {
+        setPageState(old => ({ ...old, page: value - 1 }));
+    };
+
     return (
         <Container>
             {loading && <CircularProgress/>}
@@ -74,21 +78,25 @@ export const BySatellites = () => {
             )}
             {!loading && pageState.data.length === 0 && <p>No statistics available</p>}
             {!loading && pageState.data.length > 0 && (
-                <DataGrid 
-                    sx={{ width: 400, height: 600 }}
-                    rows={rows}
-                    rowCount={pageState.total}
-                    loading={pageState.isLoading}
-                    pagination
-                    page={pageState.page}
-                    pageSize={pageState.pageSize}
-                    paginationMode="server"
-                    onPageChange={(newPage) => {
-                        setPageState(old => ({ ...old, page: newPage }));
-                    }}
-                    onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, pageSize: newPageSize }))}
-                    columns={columns}
-                />
+                <div>
+                    <DataGrid 
+                        sx={{ width: 400, height: 600 }}
+                        rows={rows}
+                        rowCount={pageState.total}
+                        loading={pageState.isLoading}
+                        pagination
+                        page={pageState.page}
+                        pageSize={pageState.pageSize}
+                        paginationMode="server"
+                        hideFooter={true}
+                        columns={columns}
+                    />
+                    <Pagination
+                        count={Math.ceil(pageState.total / pageState.pageSize)}
+                        page={pageState.page + 1}
+                        onChange={handlePageChange}
+                    />
+                </div>
 			)}
         </Container>
     );

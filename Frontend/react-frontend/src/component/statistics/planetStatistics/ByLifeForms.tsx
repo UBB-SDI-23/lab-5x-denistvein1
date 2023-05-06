@@ -2,7 +2,7 @@ import {
 	CircularProgress,
 	Container,
 	IconButton,
-    TextField,
+    Pagination,
 } from "@mui/material";
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
@@ -36,10 +36,7 @@ export const ByLifeForms = () => {
             setLoading(true);
             try{
                 setPageState(old => ({...old, isLoading: true }))
-                const time1 = new Date().getTime();
                 const response = await axios.get(`${BACKEND_API_URL}/planets/by-life-forms?page=${pageState.page}&pageSize=${pageState.pageSize}`);
-                const time2 = new Date().getTime();
-                console.log(time2 - time1);
                 const statistics = await response.data;
                 const responseRowCount = await axios.get(`${BACKEND_API_URL}/planets/size`);
                 const rowCount = await responseRowCount.data;
@@ -65,6 +62,10 @@ export const ByLifeForms = () => {
         }
     ));
 
+    const handlePageChange = (event: any, value: number) => {
+        setPageState(old => ({ ...old, page: value - 1 }));
+    };
+
     return (
         <Container>
             {loading && <CircularProgress/>}
@@ -77,21 +78,25 @@ export const ByLifeForms = () => {
             )}
             {!loading && pageState.data.length === 0 && <p>No statistics available</p>}
             {!loading && pageState.data.length > 0 && (
-                <DataGrid 
-                    sx={{ width: 400, height: 600 }}
-                    rows={rows}
-                    rowCount={pageState.total}
-                    loading={pageState.isLoading}
-                    pagination
-                    page={pageState.page}
-                    pageSize={pageState.pageSize}
-                    paginationMode="server"
-                    onPageChange={(newPage) => {
-                        setPageState(old => ({ ...old, page: newPage }));
-                    }}
-                    onPageSizeChange={(newPageSize) => setPageState(old => ({ ...old, pageSize: newPageSize }))}
-                    columns={columns}
-                />
+                <div>
+                    <DataGrid 
+                        sx={{ width: 400, height: 600 }}
+                        rows={rows}
+                        rowCount={pageState.total}
+                        loading={pageState.isLoading}
+                        pagination
+                        page={pageState.page}
+                        pageSize={pageState.pageSize}
+                        paginationMode="server"
+                        hideFooter={true}
+                        columns={columns}
+                    />
+                    <Pagination
+                        count={Math.ceil(pageState.total / pageState.pageSize)}
+                        page={pageState.page + 1}
+                        onChange={handlePageChange}
+                    />
+                </div>
 			)}
         </Container>
     );
