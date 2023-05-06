@@ -31,6 +31,7 @@ public class CustomPlanetRepositoryImpl implements CustomPlanetRepository{
         ))
                 .groupBy(root.get("id"), root.get("name"))
                 .orderBy(criteriaBuilder.desc(criteriaBuilder.count(planetSatelliteJoin)));
+
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
