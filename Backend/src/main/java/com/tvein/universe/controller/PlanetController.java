@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = "https://universe-mpp.netlify.app/")
+@CrossOrigin(origins = {"https://universe-mpp.netlify.app", "http://localhost:5173"})
 @RequestMapping(path = "/api/planets")
 public class PlanetController {
     private final IPlanetService planetService;
