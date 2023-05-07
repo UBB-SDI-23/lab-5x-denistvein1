@@ -16,51 +16,51 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/lifeForms")
 public class LifeFormController {
 
     private final ILifeFormService lifeFormService;
 
     private final ModelMapper modelMapper;
 
-    @PostMapping("/lifeForms")
+    @PostMapping
     public ResponseEntity<LifeForm> saveLifeForm(@Valid @RequestBody LifeForm lifeForm){
         return new ResponseEntity<>(lifeFormService.saveLifeForm(lifeForm), HttpStatus.CREATED);
     }
 
-    @GetMapping("/lifeForms/autocomplete")
+    @GetMapping("/autocomplete")
     public ResponseEntity<List<LifeForm>> getPlanets(@RequestParam String query) {
         return new ResponseEntity<>(lifeFormService.getLifeFormsMatching(query), HttpStatus.OK);
     }
 
-    @GetMapping("/lifeForms/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<LifeFormDTO> getLifeForm(@PathVariable Long id, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "1") Integer pageSize){
         LifeForm lifeForm = lifeFormService.getLifeForm(id, page, pageSize);
         LifeFormDTO lifeFormDTO = modelMapper.map(lifeForm, LifeFormDTO.class);
         return new ResponseEntity<>(lifeFormDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/lifeForms/{id}/size")
+    @GetMapping("/{id}/size")
     public ResponseEntity<Long> getSize(@PathVariable Long id){
         return new ResponseEntity<>(lifeFormService.total(id), HttpStatus.OK);
     }
 
-    @GetMapping("/lifeForms")
+    @GetMapping
     public ResponseEntity<List<LifeFormsNoPlanets>> getLifeForms(@RequestParam Integer page, @RequestParam Integer pageSize){
         return new ResponseEntity<>(lifeFormService.getLifeForms(page, pageSize), HttpStatus.OK);
     }
 
-    @GetMapping("/lifeForms/size")
+    @GetMapping("/size")
     public ResponseEntity<Long> getSize(){
         return new ResponseEntity<>(lifeFormService.total(), HttpStatus.OK);
     }
 
-    @PutMapping("/lifeForms/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<LifeForm> updateLifeForm(@Valid @RequestBody LifeForm lifeForm, @PathVariable Long id){
         return new ResponseEntity<>(lifeFormService.updateLifeForm(lifeForm, id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/lifeForms/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteLifeForm(@PathVariable Long id){
         lifeFormService.deleteLifeForm(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

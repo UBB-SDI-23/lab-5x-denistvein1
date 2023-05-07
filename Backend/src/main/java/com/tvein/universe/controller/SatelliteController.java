@@ -16,42 +16,42 @@ import java.util.stream.Collectors;
 @RestController
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/satellites")
 public class SatelliteController {
 
     private final ISatelliteService satelliteService;
 
     private final ModelMapper modelMapper;
 
-    @PostMapping("/satellites/{planetId}")
+    @PostMapping("/{planetId}")
     public ResponseEntity<Satellite> saveSatellite(@Valid @RequestBody Satellite satellite, @PathVariable Long planetId){
         return new ResponseEntity<>(satelliteService.saveSatellite(satellite, planetId), HttpStatus.CREATED);
     }
 
-    @GetMapping("/satellites/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Satellite> getSatellite(@PathVariable Long id){
         Satellite satellites = satelliteService.getSatellite(id);
         return new ResponseEntity<>(satellites, HttpStatus.OK);
     }
 
-    @GetMapping("/satellites")
+    @GetMapping
     public ResponseEntity<List<SatelliteDTO>> getSatellites(@RequestParam Integer page, @RequestParam Integer pageSize){
         List<SatelliteDTO> satellites= satelliteService.getSatellites(page, pageSize).stream()
                 .map(satellite -> modelMapper.map(satellite, SatelliteDTO.class)).collect(Collectors.toList());
         return new ResponseEntity<>(satellites, HttpStatus.OK);
     }
 
-    @GetMapping("/satellites/size")
+    @GetMapping("/size")
     public ResponseEntity<Long> getSize(){
         return new ResponseEntity<>(satelliteService.total(), HttpStatus.OK);
     }
 
-    @PutMapping("/satellites/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Satellite> updateSatellite(@Valid @RequestBody Satellite satellite, @PathVariable Long id){
         return new ResponseEntity<>(satelliteService.updateSatellite(satellite, id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/satellites/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteSatellite(@PathVariable Long id){
         satelliteService.deleteSatellite(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
