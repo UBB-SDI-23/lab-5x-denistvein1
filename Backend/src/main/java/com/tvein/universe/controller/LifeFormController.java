@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = "https://universe-mpp.netlify.app/", allowCredentials = "true")
+@CrossOrigin(origins = {"https://universe-mpp.netlify.app"}, allowCredentials = "true")
 @RequestMapping(path = "/api/lifeForms")
 public class LifeFormController {
 

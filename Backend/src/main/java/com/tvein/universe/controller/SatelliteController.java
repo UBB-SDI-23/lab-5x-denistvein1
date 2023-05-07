@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = "https://universe-mpp.netlify.app/", allowCredentials = "true")
+@CrossOrigin(origins = {"https://universe-mpp.netlify.app"}, allowCredentials = "true")
 @RequestMapping(path = "/api/satellites")
 public class SatelliteController {
 
