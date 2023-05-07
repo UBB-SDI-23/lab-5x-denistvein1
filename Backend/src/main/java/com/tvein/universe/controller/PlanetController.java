@@ -21,30 +21,30 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = {"https://universe-mpp.netlify.app"}, allowCredentials = "true")
-@RequestMapping(path = "/api/planets")
+@CrossOrigin(origins = "*")
+@RequestMapping(path = "/api")
 public class PlanetController {
     private final IPlanetService planetService;
     private final IPlanetLifeFormService planetLifeFormService;
     private final ModelMapper modelMapper;
 
-    @PostMapping("/{planetId}/lifeForms/{lifeFormId}")
+    @PostMapping("/planets/{planetId}/lifeForms/{lifeFormId}")
     public ResponseEntity<PlanetLifeForm> savePlanetLifeForm(@Valid @RequestBody PlanetLifeForm planetLifeForm, @PathVariable Long planetId, @PathVariable Long lifeFormId){
         return new ResponseEntity<>(planetLifeFormService.savePlanetLifeForm(planetLifeForm, planetId, lifeFormId), HttpStatus.CREATED);
     }
 
-    @PostMapping
+    @PostMapping("/planets")
     public ResponseEntity<Planet> savePlanet(@Valid @RequestBody Planet planet){
         return new ResponseEntity<>(planetService.savePlanet(planet), HttpStatus.CREATED);
     }
 
-    @PostMapping("/{id}/satellites")
+    @PostMapping("/planets/{id}/satellites")
     public ResponseEntity<HttpStatus> bulkAddSatellites(@PathVariable Long id, @RequestBody List<BulkAddDto> listIds){
         planetService.bulkAddSatellites(id, listIds);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/planets/{id}")
     public ResponseEntity<PlanetDTO> getPlanet(@PathVariable Long id, @RequestParam(defaultValue = "0") Integer satellitesPage,
         @RequestParam(defaultValue = "1") Integer satellitesPageSize, @RequestParam(defaultValue = "0") Integer lifeFormsPage, @RequestParam(defaultValue = "1") Integer lifeFormsPageSize){
         Planet planet = planetService.getPlanet(id, satellitesPage, satellitesPageSize, lifeFormsPage, lifeFormsPageSize);
@@ -52,17 +52,17 @@ public class PlanetController {
         return new ResponseEntity<>(planetDTO, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/size/satellites")
+    @GetMapping("/planets/{id}/size/satellites")
     public ResponseEntity<Long> getSatellitesSize(@PathVariable Long id){
         return new ResponseEntity<>(planetService.totalSatellites(id), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/size/lifeForms")
+    @GetMapping("/planets/{id}/size/lifeForms")
     public ResponseEntity<Long> getLifeFormsSize(@PathVariable Long id){
         return new ResponseEntity<>(planetService.totalLifeForms(id), HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/planets")
     public ResponseEntity<List<PlanetDTONoSatellites>> getPlanets(@RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam(required = false) Optional<Double> radius) {
         if (radius.isPresent()) {
             return new ResponseEntity<>(planetService.getPlanetsByRadiusGreaterThan(page, pageSize, radius.get()), HttpStatus.OK);
@@ -71,12 +71,12 @@ public class PlanetController {
         }
     }
 
-    @GetMapping("/autocomplete")
+    @GetMapping("/planets/autocomplete")
     public ResponseEntity<List<Planet>> getPlanets(@RequestParam String query) {
         return new ResponseEntity<>(planetService.getPlanetsMatching(query), HttpStatus.OK);
     }
 
-    @GetMapping("/size")
+    @GetMapping("/planets/size")
     public ResponseEntity<Long> getSize(@RequestParam(required = false) Optional<Double> radius){
         if(radius.isPresent()){
             return new ResponseEntity<>(planetService.total(radius.get()), HttpStatus.OK);
@@ -85,32 +85,32 @@ public class PlanetController {
         }
     }
 
-    @GetMapping("/by-satellites")
+    @GetMapping("/planets/by-satellites")
     public ResponseEntity<List<StatisticsPlanetSatellitesDTO>> getStatisticsSatellites(@RequestParam Integer page, @RequestParam Integer pageSize){
         return new ResponseEntity<>(planetService.getPlanetsBySatellites(page, pageSize), HttpStatus.OK);
     }
 
-    @GetMapping("/by-satellites/size")
+    @GetMapping("/planets/by-satellites/size")
     public ResponseEntity<Integer> getStatisticsSatellitesSize(){
         return new ResponseEntity<>(planetService.getPlanetsBySatellitesSize(), HttpStatus.OK);
     }
 
-    @GetMapping("/by-life-forms")
+    @GetMapping("/planets/by-life-forms")
     public ResponseEntity<List<StatisticsPlanetLifeFormsDTO>> getStatisticsLifeForms(@RequestParam Integer page, @RequestParam Integer pageSize){
         return new ResponseEntity<>(planetService.getPlanetsByLifeForms(page, pageSize), HttpStatus.OK);
     }
 
-    @GetMapping("/by-life-forms/size")
+    @GetMapping("/planets/by-life-forms/size")
     public ResponseEntity<Integer> getStatisticsLifeFormsSize(){
         return new ResponseEntity<>(planetService.getPlanetsByLifeFormsSize(), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/planets/{id}")
     public ResponseEntity<Planet> updatePlanet(@Valid @RequestBody Planet planet, @PathVariable Long id){
         return new ResponseEntity<>(planetService.updatePlanet(planet, id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/planets/{id}")
     public ResponseEntity<HttpStatus> deletePlanet(@PathVariable Long id){
         planetService.deletePlanet(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
