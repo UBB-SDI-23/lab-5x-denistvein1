@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@CrossOrigin(origins = "https://www.onlyhater.com")
+//@CrossOrigin(origins = "https://www.onlyhater.com")
 @RequestMapping(path = "/api/planets")
 public class PlanetController {
     private final IPlanetService planetService;
