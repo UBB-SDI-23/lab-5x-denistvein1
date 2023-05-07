@@ -1,6 +1,3 @@
-// export const BACKEND_API_URL = "/api";
-// export const BACKEND_API_URL = "http://localhost/api";
-
 const PROD_API_URL = 'https://www.onlyhater.com/api';
 const DEV_API_URL = "http://localhost/api";
 
